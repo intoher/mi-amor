@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💕 Bitácora de Conexión</title>
+  <meta name="description" content="Bitácora romántica de conexión diaria para parejas a distancia." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            body: ['Quicksand', 'sans-serif'],
+            script: ['Dancing Script', 'cursive'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: 'Quicksand', sans-serif; overflow-x: hidden; }
+
+    /* ── Animations ── */
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-18px) rotate(3deg); }
+    }
+    @keyframes pulse-heart {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slide-down-out {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-60px) scale(0.9); }
+    }
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(-4deg); }
+      50% { transform: rotate(4deg); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px) rotate(-2deg); }
+      40% { transform: translateX(8px) rotate(2deg); }
+      60% { transform: translateX(-5px) rotate(-1deg); }
+      80% { transform: translateX(5px) rotate(1deg); }
+    }
+    @keyframes sparkle-in {
+      0% { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+      60% { transform: scale(1.1) rotate(2deg); }
+      100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes bounce-in {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.15); }
+      70% { transform: scale(0.95); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes glow-morning {
+      0% { box-shadow: 0 0 10px rgba(251,191,36,0.3), 0 0 30px rgba(251,191,36,0.1); }
+      100% { box-shadow: 0 0 20px rgba(251,191,36,0.5), 0 0 50px rgba(251,191,36,0.2); }
+    }
+    @keyframes glow-night {
+      0% { box-shadow: 0 0 10px rgba(139,92,246,0.3), 0 0 30px rgba(139,92,246,0.1); }
+      100% { box-shadow: 0 0 20px rgba(139,92,246,0.5), 0 0 50px rgba(139,92,246,0.2); }
+    }
+
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    .animate-pulse-heart { animation: pulse-heart 2s ease-in-out infinite; }
+    .animate-slide-up { animation: slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .animate-slide-down-out { animation: slide-down-out 0.5s ease-in both; }
+    .animate-wiggle { animation: wiggle 1s ease-in-out infinite; }
+    .animate-shake { animation: shake 0.5s ease-in-out; }
+    .animate-sparkle-in { animation: sparkle-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    .animate-fade-in { animation: fade-in 0.5s ease-out both; }
+    .animate-bounce-in { animation: bounce-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    .animate-glow-morning { animation: glow-morning 2s ease-in-out infinite alternate; }
+    .animate-glow-night { animation: glow-night 2s ease-in-out infinite alternate; }
+
+    /* ── Delay utilities ── */
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
+    .delay-500 { animation-delay: 0.5s; }
+
+    /* ── Fleeing No button ── */
+    #btn-no {
+      position: absolute;
+      transition: all 0.001s;
+      z-index: 20;
+      user-select: none;
+      touch-action: none;
+    }
+
+    /* ── Emoji select buttons ── */
+    .emoji-btn {
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+    }
+    .emoji-btn:hover { transform: scale(1.12); }
+    .emoji-btn:active { transform: scale(0.95); }
+    .emoji-btn.selected {
+      transform: scale(1.08);
+      box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.6);
+    }
+    .night-mode .emoji-btn.selected {
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.6);
+    }
+
+    /* ── Checklist ── */
+    .check-item { transition: all 0.3s ease; cursor: pointer; }
+    .check-item:hover { transform: translateX(4px); }
+    .check-item.checked { background: rgba(251, 191, 36, 0.15); }
+    .night-mode .check-item.checked { background: rgba(139, 92, 246, 0.2); }
+
+    /* ── Stars ── */
+    .star {
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      font-size: 1.8rem;
+      filter: grayscale(1) opacity(0.3);
+    }
+    .star:hover { transform: scale(1.3); }
+    .star.active { filter: grayscale(0) opacity(1); transform: scale(1.1); }
+
+    /* ── Glass ── */
+    .glass { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+
+    /* ── Scrollbar ── */
+    textarea::-webkit-scrollbar { width: 6px; }
+    textarea::-webkit-scrollbar-track { background: transparent; }
+    textarea::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+    .night-mode textarea::-webkit-scrollbar-thumb { background: #4b5563; }
+
+    /* ── Particles ── */
+    .particle { position: fixed; pointer-events: none; opacity: 0.12; z-index: 0; }
+
+    /* ── Send button ripple ── */
+    .send-btn { position: relative; overflow: hidden; }
+    .send-btn::before {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      width: 0; height: 0;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .send-btn:hover::before { width: 300px; height: 300px; }
+
+    /* ── Screen transitions ── */
+    .screen { transition: opacity 0.4s ease, transform 0.4s ease; }
+    .screen.hidden { display: none !important; }
+
+    /* ── No-attempt counter ── */
+    .no-counter {
+      position: fixed; bottom: 16px; right: 16px;
+      font-size: 0.75rem; opacity: 0.4;
+      z-index: 10; pointer-events: none;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-pink-100 via-rose-50 to-amber-50 text-rose-950 relative">
+
+  <!-- Floating particles -->
+  <div id="particles" class="fixed inset-0 pointer-events-none z-0"></div>
+
+  <!-- ═══════════════════════════════════════════════════
+       SCREEN 1 — ¿Me quieres?
+       ═══════════════════════════════════════════════════ -->
+  <div id="screen-love" class="screen fixed inset-0 z-40 flex flex-col items-center justify-center px-6
+                                bg-gradient-to-br from-pink-200 via-rose-100 to-fuchsia-100">
+
+    <!-- Big heart -->
+    <div class="text-8xl mb-6 animate-pulse-heart select-none">💖</div>
+
+    <!-- Question -->
+    <h1 class="font-script text-5xl md:text-6xl text-rose-700 mb-2 animate-sparkle-in text-center">
+      ¿Me quieres?
+    </h1>
+    <p class="text-rose-400 text-sm mb-10 animate-fade-in delay-300 opacity-0" style="animation-fill-mode:both;">
+      Tienes que ser sincera...
+    </p>
+
+    <!-- Sí button -->
+    <button id="btn-si"
+            class="relative z-10 px-14 py-5 rounded-2xl font-bold text-xl text-white
+                   bg-gradient-to-r from-rose-400 via-pink-500 to-fuchsia-500
+                   hover:from-rose-500 hover:via-pink-600 hover:to-fuchsia-600
+                   shadow-2xl shadow-pink-300/50
+                   active:scale-95 transition-transform duration-200
+                   animate-bounce-in delay-400 opacity-0"
+            style="animation-fill-mode:both;">
+      ¡Sí, mucho! 🥰💕
+    </button>
+
+    <!-- No button (fleeing) -->
+    <button id="btn-no"
+            class="mt-6 px-4 py-1.5 rounded-lg text-xs font-medium text-rose-300 bg-rose-100/60
+                   border border-rose-200/60 hover:bg-rose-200/60
+                   animate-fade-in delay-500 opacity-0"
+            style="animation-fill-mode:both;">
+      No 😢
+    </button>
+
+    <!-- Attempts counter (hidden easter egg) -->
+    <div id="no-counter" class="no-counter text-rose-400"></div>
+
+    <!-- Tease messages that appear when she tries to click No -->
+    <p id="tease-msg" class="fixed bottom-20 left-0 right-0 text-center text-sm font-semibold text-rose-400
+                             opacity-0 transition-opacity duration-300 z-50 pointer-events-none px-4"></p>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       SCREEN 2 — Action Choice (Desperté / Dormir)
+       ═══════════════════════════════════════════════════ -->
+  <div id="screen-choice" class="screen hidden fixed inset-0 z-30 flex flex-col items-center justify-center px-6">
+
+    <!-- After saying Sí, a lovey message -->
+    <div class="text-6xl mb-4 animate-wiggle select-none">🥰</div>
+    <h2 id="love-response" class="font-script text-4xl md:text-5xl text-center mb-2 animate-sparkle-in">
+      ¡Lo sabía! 💕
+    </h2>
+    <p class="text-sm opacity-60 mb-12 animate-fade-in delay-200 text-center" style="animation-fill-mode:both;">
+      Ahora cuéntame, ¿qué estás haciendo?
+    </p>
+
+    <div class="flex flex-col sm:flex-row gap-5 w-full max-w-md animate-slide-up delay-300" style="animation-fill-mode:both;">
+      <!-- Woke up -->
+      <button id="btn-wakeup"
+              class="flex-1 py-8 px-6 rounded-3xl text-center font-bold text-lg
+                     bg-gradient-to-br from-amber-100 via-yellow-50 to-orange-100
+                     border-2 border-amber-200/70
+                     shadow-xl shadow-amber-200/40
+                     hover:shadow-2xl hover:shadow-amber-300/50 hover:-translate-y-1
+                     active:scale-[0.97]
+                     transition-all duration-300 text-amber-800">
+        <div class="text-5xl mb-3">☀️</div>
+        <div>Me desperté</div>
+        <div class="text-xs font-normal opacity-60 mt-1">Buenos días, mi amor</div>
+      </button>
+
+      <!-- Going to sleep -->
+      <button id="btn-sleep"
+              class="flex-1 py-8 px-6 rounded-3xl text-center font-bold text-lg
+                     bg-gradient-to-br from-indigo-900 via-violet-900 to-purple-900
+                     border-2 border-violet-500/30
+                     shadow-xl shadow-violet-900/40
+                     hover:shadow-2xl hover:shadow-violet-700/50 hover:-translate-y-1
+                     active:scale-[0.97]
+                     transition-all duration-300 text-violet-100">
+        <div class="text-5xl mb-3">🌙</div>
+        <div>Me voy a dormir</div>
+        <div class="text-xs font-normal opacity-60 mt-1">Buenas noches, mi vida</div>
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       SCREEN 3 — Form (Morning or Night)
+       ═══════════════════════════════════════════════════ -->
+  <div id="screen-form" class="screen hidden min-h-screen relative z-10">
+
+    <!-- Back button -->
+    <button id="btn-back"
+            class="fixed top-4 left-4 z-20 w-10 h-10 rounded-full flex items-center justify-center
+                   bg-white/60 dark:bg-slate-800/60 glass shadow-lg
+                   hover:scale-110 active:scale-95 transition-transform text-lg">
+      ←
+    </button>
+
+    <!-- Header -->
+    <header class="pt-14 pb-4 px-4 text-center">
+      <h1 id="form-title" class="font-script text-4xl md:text-5xl mb-1 animate-sparkle-in"></h1>
+      <p id="form-subtitle" class="text-sm opacity-60 animate-fade-in delay-100" style="animation-fill-mode:both;"></p>
+    </header>
+
+    <main class="px-4 pb-12">
+      <div class="max-w-lg mx-auto">
+
+        <!-- ─── MORNING FORM ─── -->
+        <form id="form-morning" class="space-y-5 hidden">
+
+          <!-- Q1 -->
+          <div class="glass rounded-2xl p-5 bg-white/60 border border-amber-200/50 shadow-lg shadow-amber-100/40 animate-slide-up">
+            <label class="block font-semibold text-base mb-3">🌅 ¿Cómo dormiste y te sientes físicamente?</label>
+            <div id="sleep-options" class="grid grid-cols-2 gap-3">
+              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-amber-100/80 border-2 border-transparent text-center font-medium text-sm" data-value="bien">😴 Bien</button>
+              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-amber-100/80 border-2 border-transparent text-center font-medium text-sm" data-value="regular">🥱 Regular</button>
+              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-amber-100/80 border-2 border-transparent text-center font-medium text-sm" data-value="energia">🔋 Con energía</button>
+              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-amber-100/80 border-2 border-transparent text-center font-medium text-sm" data-value="cansada">🤒 Cansada</button>
+            </div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="glass rounded-2xl p-5 bg-white/60 border border-amber-200/50 shadow-lg shadow-amber-100/40 animate-slide-up delay-100" style="animation-fill-mode:both;">
+            <label class="block font-semibold text-base mb-3">✨ ¿Cuál es tu vibe hoy?</label>
+            <div id="vibe-options" class="flex flex-wrap gap-3 justify-center">
+              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="😊">😊</button>
+              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="🥰">🥰</button>
+              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="😤">😤</button>
+              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="🤗">🤗</button>
+              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="😌">😌</button>
+              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="🌸">🌸</button>
+              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="💪">💪</button>
+              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="🫠">🫠</button>
+            </div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="glass rounded-2xl p-5 bg-white/60 border border-amber-200/50 shadow-lg shadow-amber-100/40 animate-slide-up delay-200" style="animation-fill-mode:both;">
+            <label class="block font-semibold text-base mb-3">💌 ¿Qué necesitas de mí hoy?</label>
+            <div id="needs-morning" class="space-y-2">
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-amber-50/80"><input type="checkbox" value="Espacio" class="w-5 h-5 rounded accent-amber-500" /><span class="text-sm font-medium">🫧 Espacio tranquilo</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-amber-50/80"><input type="checkbox" value="Mensajitos" class="w-5 h-5 rounded accent-amber-500" /><span class="text-sm font-medium">💬 Mensajitos bonitos</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-amber-50/80"><input type="checkbox" value="Llamada" class="w-5 h-5 rounded accent-amber-500" /><span class="text-sm font-medium">📞 Una llamadita</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-amber-50/80"><input type="checkbox" value="Memes" class="w-5 h-5 rounded accent-amber-500" /><span class="text-sm font-medium">😂 Memes y risas</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-amber-50/80"><input type="checkbox" value="Motivación" class="w-5 h-5 rounded accent-amber-500" /><span class="text-sm font-medium">🔥 Motivación y ánimos</span></label>
+            </div>
+            <input id="needs-morning-other" type="text" placeholder="Algo más que necesites..."
+                   class="mt-3 w-full rounded-xl border border-amber-200 bg-white/70 px-4 py-2.5 text-sm placeholder:text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-300" />
+          </div>
+
+          <!-- Q4 -->
+          <div class="glass rounded-2xl p-5 bg-white/60 border border-amber-200/50 shadow-lg shadow-amber-100/40 animate-slide-up delay-300" style="animation-fill-mode:both;">
+            <label class="block font-semibold text-base mb-3">🌆 ¿Cuál es tu plan para hoy?</label>
+            <textarea id="plan-dia" rows="3" placeholder="Cuéntame qué tienes planeado..."
+                      class="w-full rounded-xl border border-amber-200 bg-white/70 px-4 py-3 text-sm placeholder:text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-300 resize-none"></textarea>
+          </div>
+
+          <!-- Q5 -->
+          <div class="glass rounded-2xl p-5 bg-white/60 border border-amber-200/50 shadow-lg shadow-amber-100/40 animate-slide-up delay-400" style="animation-fill-mode:both;">
+            <label class="block font-semibold text-base mb-3">☀️ Tu mensajito de buenos días</label>
+            <textarea id="msg-morning" rows="4" placeholder="Escribe algo bonito para empezar el día juntos..."
+                      class="w-full rounded-xl border border-amber-200 bg-white/70 px-4 py-3 text-sm placeholder:text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-300 resize-none"></textarea>
+          </div>
+
+          <button type="submit"
+                  class="send-btn w-full py-4 rounded-2xl font-bold text-lg text-white shadow-xl
+                         bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400
+                         hover:from-amber-500 hover:via-orange-500 hover:to-rose-500
+                         active:scale-[0.97] transition-transform duration-200 animate-glow-morning
+                         animate-slide-up delay-500" style="animation-fill-mode:both;">
+            Enviar a nuestro Discord 💌
+          </button>
+        </form>
+
+        <!-- ─── NIGHT FORM ─── -->
+        <form id="form-night" class="space-y-5 hidden">
+
+          <!-- Q1 Stars -->
+          <div class="glass rounded-2xl p-5 bg-slate-800/60 border border-violet-500/20 shadow-lg shadow-violet-900/30 animate-slide-up">
+            <label class="block font-semibold text-base mb-3 text-violet-100">⭐ ¿Cómo calificarías tu día?</label>
+            <div id="star-rating" class="flex justify-center gap-1 flex-wrap">
+              <span class="star" data-value="1">⭐</span>
+              <span class="star" data-value="2">⭐</span>
+              <span class="star" data-value="3">⭐</span>
+              <span class="star" data-value="4">⭐</span>
+              <span class="star" data-value="5">⭐</span>
+              <span class="star" data-value="6">⭐</span>
+              <span class="star" data-value="7">⭐</span>
+              <span class="star" data-value="8">⭐</span>
+              <span class="star" data-value="9">⭐</span>
+              <span class="star" data-value="10">⭐</span>
+            </div>
+            <p id="star-label" class="text-center text-sm text-violet-300 mt-2 h-5"></p>
+          </div>
+
+          <!-- Q2 Emotion -->
+          <div class="glass rounded-2xl p-5 bg-slate-800/60 border border-violet-500/20 shadow-lg shadow-violet-900/30 animate-slide-up delay-100" style="animation-fill-mode:both;">
+            <label class="block font-semibold text-base mb-3 text-violet-100">💜 ¿Cómo te sientes ahora?</label>
+            <div id="emotion-options" class="grid grid-cols-2 gap-3">
+              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-violet-900/50 border-2 border-transparent text-center font-medium text-sm text-violet-100" data-value="mimosa">🧸 Mimosa</button>
+              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-violet-900/50 border-2 border-transparent text-center font-medium text-sm text-violet-100" data-value="cansada">🧠 Cansada</button>
+              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-violet-900/50 border-2 border-transparent text-center font-medium text-sm text-violet-100" data-value="feliz">✨ Feliz</button>
+              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-violet-900/50 border-2 border-transparent text-center font-medium text-sm text-violet-100" data-value="pensativa">💭 Pensativa</button>
+            </div>
+          </div>
+
+          <!-- Q3 Worries -->
+          <div class="glass rounded-2xl p-5 bg-slate-800/60 border border-violet-500/20 shadow-lg shadow-violet-900/30 animate-slide-up delay-200" style="animation-fill-mode:both;">
+            <label class="block font-semibold text-base mb-3 text-violet-100">🔮 Preocupaciones o ilusiones para mañana</label>
+            <textarea id="worries" rows="3" placeholder="Lo que ronda por tu mente..."
+                      class="w-full rounded-xl border border-violet-700/50 bg-slate-900/60 px-4 py-3 text-sm text-violet-100 placeholder:text-violet-400/60 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"></textarea>
+          </div>
+
+          <!-- Q4 Needs -->
+          <div class="glass rounded-2xl p-5 bg-slate-800/60 border border-violet-500/20 shadow-lg shadow-violet-900/30 animate-slide-up delay-300" style="animation-fill-mode:both;">
+            <label class="block font-semibold text-base mb-3 text-violet-100">🛏️ ¿Qué necesitas para dormir tranquila?</label>
+            <div id="needs-night" class="space-y-2">
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-700/40 text-violet-100"><input type="checkbox" value="Nota de voz" class="w-5 h-5 rounded accent-violet-500" /><span class="text-sm font-medium">🎙️ Una nota de voz tuya</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-700/40 text-violet-100"><input type="checkbox" value="Llamadita" class="w-5 h-5 rounded accent-violet-500" /><span class="text-sm font-medium">📞 Llamadita de buenas noches</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-700/40 text-violet-100"><input type="checkbox" value="Te amo" class="w-5 h-5 rounded accent-violet-500" /><span class="text-sm font-medium">💖 Que me digas te amo</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-700/40 text-violet-100"><input type="checkbox" value="Tranquilidad" class="w-5 h-5 rounded accent-violet-500" /><span class="text-sm font-medium">🫂 Saber que estamos bien</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-700/40 text-violet-100"><input type="checkbox" value="Música" class="w-5 h-5 rounded accent-violet-500" /><span class="text-sm font-medium">🎵 Música relajante juntos</span></label>
+            </div>
+            <input id="needs-night-other" type="text" placeholder="Algo más..."
+                   class="mt-3 w-full rounded-xl border border-violet-700/50 bg-slate-900/60 px-4 py-2.5 text-sm text-violet-100 placeholder:text-violet-400/60 focus:outline-none focus:ring-2 focus:ring-violet-500" />
+          </div>
+
+          <!-- Q5 Message -->
+          <div class="glass rounded-2xl p-5 bg-slate-800/60 border border-violet-500/20 shadow-lg shadow-violet-900/30 animate-slide-up delay-400" style="animation-fill-mode:both;">
+            <label class="block font-semibold text-base mb-3 text-violet-100">🌙 Tu mensajito antes de apagar las luces</label>
+            <textarea id="msg-night" rows="4" placeholder="Dulces sueños comienzan con tus palabras..."
+                      class="w-full rounded-xl border border-violet-700/50 bg-slate-900/60 px-4 py-3 text-sm text-violet-100 placeholder:text-violet-400/60 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"></textarea>
+          </div>
+
+          <button type="submit"
+                  class="send-btn w-full py-4 rounded-2xl font-bold text-lg text-white shadow-xl
+                         bg-gradient-to-r from-violet-500 via-purple-500 to-indigo-500
+                         hover:from-violet-600 hover:via-purple-600 hover:to-indigo-600
+                         active:scale-[0.97] transition-transform duration-200 animate-glow-night
+                         animate-slide-up delay-500" style="animation-fill-mode:both;">
+            Enviar a nuestro Discord 💌
+          </button>
+        </form>
+
+      </div>
+    </main>
+
+    <footer class="text-center pb-6 px-4">
+      <p class="text-xs opacity-30">Hecho con 💕 para nosotros</p>
+    </footer>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       CONFIRMATION OVERLAY
+       ═══════════════════════════════════════════════════ -->
+  <div id="confirmation" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+    <div class="relative z-10 mx-4 max-w-sm w-full rounded-3xl p-8 text-center animate-slide-up" id="confirm-card">
+      <div class="text-6xl mb-4 animate-wiggle">💖</div>
+      <h2 class="font-script text-3xl mb-2" id="confirm-title">¡Enviado!</h2>
+      <p class="text-base opacity-80 mb-6" id="confirm-msg">¡Reporte enviado a nuestro canal!<br/>Te amo 💖</p>
+      <button id="confirm-close" class="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 transition-all shadow-lg">
+        Cerrar 🥰
+      </button>
+    </div>
+  </div>
+
+  <!-- ERROR TOAST -->
+  <div id="error-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-6 py-3 rounded-2xl bg-red-500 text-white font-semibold shadow-xl opacity-0 pointer-events-none transition-opacity duration-300 text-sm max-w-xs text-center">
+    <span id="error-msg">Error al enviar</span>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       SCRIPT
+       ═══════════════════════════════════════════════════ -->
+  <script>
+    // ╔════════════════════════════════════════════════════════════════╗
+    // ║  🔧 CONFIGURACIÓN — Pega aquí tu Webhook de Discord           ║
+    // ╚════════════════════════════════════════════════════════════════╝
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1542153169830674622/qW2PzZtopOgzFVVMt3S2u8eXKH00vY1uK1Q2VSZKG6vbrMkFKckItwTlBAudxSKt0Z7V";
+
+
+    // ─── State ───
+    let currentMode = null; // 'morning' | 'night'
+    let selectedSleep = null;
+    let selectedVibe = null;
+    let selectedEmotion = null;
+    let starRating = 0;
+    let noAttempts = 0;
+
+    // Check URL params — Discord link buttons will set ?mode=morning or ?mode=night
+    const urlParams = new URLSearchParams(window.location.search);
+    const presetMode = urlParams.get('mode'); // 'morning' or 'night'
+
+    // ─── DOM ───
+    const screenLove = document.getElementById('screen-love');
+    const screenChoice = document.getElementById('screen-choice');
+    const screenForm = document.getElementById('screen-form');
+    const btnSi = document.getElementById('btn-si');
+    const btnNo = document.getElementById('btn-no');
+    const btnWakeup = document.getElementById('btn-wakeup');
+    const btnSleep = document.getElementById('btn-sleep');
+    const btnBack = document.getElementById('btn-back');
+    const formMorning = document.getElementById('form-morning');
+    const formNight = document.getElementById('form-night');
+    const formTitle = document.getElementById('form-title');
+    const formSubtitle = document.getElementById('form-subtitle');
+    const confirmation = document.getElementById('confirmation');
+    const confirmCard = document.getElementById('confirm-card');
+    const confirmTitle = document.getElementById('confirm-title');
+    const confirmMsg = document.getElementById('confirm-msg');
+    const confirmClose = document.getElementById('confirm-close');
+    const errorToast = document.getElementById('error-toast');
+    const errorMsgEl = document.getElementById('error-msg');
+    const teaseMsg = document.getElementById('tease-msg');
+    const noCounter = document.getElementById('no-counter');
+    const particlesEl = document.getElementById('particles');
+
+    // ─── Tease messages ───
+    const teaseMessages = [
+      '¡Jaja, no escaparás! 😏',
+      '¿Segura? 🥺👉👈',
+      '¡Ese botón no funciona! 💕',
+      '¡Ni lo intentes! 😤💖',
+      'La respuesta correcta es SÍ 🥰',
+      '¡El botón huye de ti! 🏃‍♀️💨',
+      '¡No es una opción válida! 😂',
+      '¿En serio? ¡Imposible! 💘',
+      'Venga, dale a Sí ya 😘',
+      '¡Jajaja, nunca lo atraparás! 🦋',
+      '¡Rindete y di que sí! 🫶',
+      'Me quieres y lo sabes 😌💕',
+      '¡El botón tiene piernas! 🦵✨',
+      '¡Otro intento fallido! 😂💖',
+      '¡Dale al grande, no al chiquito! 🎯',
+    ];
+
+    // ═══════════════════════════════════════════
+    //  SCREEN 1 — Fleeing "No" button logic
+    // ═══════════════════════════════════════════
+
+    function fleeButton() {
+      const btn = btnNo;
+      const parent = screenLove;
+      const parentRect = parent.getBoundingClientRect();
+      const btnW = btn.offsetWidth;
+      const btnH = btn.offsetHeight;
+      const padding = 20;
+
+      // Random position within parent bounds
+      const maxX = parentRect.width - btnW - padding * 2;
+      const maxY = parentRect.height - btnH - padding * 2;
+      const newX = padding + Math.random() * maxX;
+      const newY = padding + Math.random() * maxY;
+
+      btn.style.left = newX + 'px';
+      btn.style.top = newY + 'px';
+      btn.style.position = 'fixed';
+
+      // Increment counter
+      noAttempts++;
+      noCounter.textContent = `Intentos de huida: ${noAttempts}`;
+
+      // Show tease
+      const msg = teaseMessages[Math.floor(Math.random() * teaseMessages.length)];
+      teaseMsg.textContent = msg;
+      teaseMsg.style.opacity = '1';
+      setTimeout(() => { teaseMsg.style.opacity = '0'; }, 1800);
+
+      // Shake the Sí button to attract attention
+      btnSi.classList.add('animate-shake');
+      setTimeout(() => btnSi.classList.remove('animate-shake'), 500);
+
+      // Make button smaller each time (min 40px wide)
+      const currentWidth = btn.offsetWidth;
+      if (currentWidth > 50) {
+        btn.style.fontSize = Math.max(8, 12 - noAttempts * 0.3) + 'px';
+        btn.style.padding = `${Math.max(2, 6 - noAttempts * 0.3)}px ${Math.max(6, 16 - noAttempts)}px`;
+      }
+    }
+
+    // Both hover and click trigger flee
+    btnNo.addEventListener('mouseenter', fleeButton);
+    btnNo.addEventListener('touchstart', (e) => { e.preventDefault(); fleeButton(); }, { passive: false });
+    btnNo.addEventListener('click', (e) => { e.preventDefault(); fleeButton(); });
+
+    // ─── Sí button → go to choice screen ───
+    btnSi.addEventListener('click', () => {
+      // Love confetti!
+      confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 },
+        colors: ['#f472b6', '#fb7185', '#e11d48', '#fbbf24', '#a78bfa'] });
+      setTimeout(() => {
+        confetti({ particleCount: 60, angle: 60, spread: 55, origin: { x: 0 },
+          colors: ['#f472b6', '#fbbf24'] });
+        confetti({ particleCount: 60, angle: 120, spread: 55, origin: { x: 1 },
+          colors: ['#a78bfa', '#fb7185'] });
+      }, 300);
+
+      // Transition
+      screenLove.style.opacity = '0';
+      screenLove.style.transform = 'scale(0.95)';
+      screenLove.style.transition = 'all 0.5s ease';
+
+      setTimeout(() => {
+        screenLove.classList.add('hidden');
+
+        // If a mode was pre-selected via URL param, skip the choice screen
+        if (presetMode === 'morning' || presetMode === 'night') {
+          currentMode = presetMode;
+          showFormScreen();
+        } else {
+          screenChoice.classList.remove('hidden');
+          screenChoice.style.opacity = '0';
+          requestAnimationFrame(() => {
+            screenChoice.style.transition = 'opacity 0.6s ease';
+            screenChoice.style.opacity = '1';
+          });
+          applyChoiceBg();
+        }
+      }, 500);
+    });
+
+
+    // ═══════════════════════════════════════════
+    //  SCREEN 2 — Choice buttons
+    // ═══════════════════════════════════════════
+
+    function applyChoiceBg() {
+      document.body.className = 'min-h-screen bg-gradient-to-br from-pink-100 via-rose-50 to-amber-50 text-rose-950 relative';
+      spawnParticles(['💕', '☀️', '🌙', '✨', '💛', '💜']);
+    }
+
+    btnWakeup.addEventListener('click', () => {
+      currentMode = 'morning';
+      showFormScreen();
+    });
+
+    btnSleep.addEventListener('click', () => {
+      currentMode = 'night';
+      showFormScreen();
+    });
+
+
+    // ═══════════════════════════════════════════
+    //  SCREEN 3 — Form
+    // ═══════════════════════════════════════════
+
+    function showFormScreen() {
+      screenChoice.style.opacity = '0';
+      screenChoice.style.transition = 'opacity 0.4s ease';
+
+      setTimeout(() => {
+        screenChoice.classList.add('hidden');
+        screenForm.classList.remove('hidden');
+
+        if (currentMode === 'morning') {
+          document.body.className = 'min-h-screen bg-amber-50 text-amber-950 relative';
+          formTitle.textContent = 'Buenos Días ☀️';
+          formTitle.style.color = '#b45309';
+          formSubtitle.textContent = 'Cuéntame cómo amaneciste, mi amor';
+          formSubtitle.style.color = '#92400e';
+          btnBack.className = 'fixed top-4 left-4 z-20 w-10 h-10 rounded-full flex items-center justify-center bg-white/60 glass shadow-lg hover:scale-110 active:scale-95 transition-transform text-lg text-amber-700';
+          formMorning.classList.remove('hidden');
+          formNight.classList.add('hidden');
+          spawnParticles(['☀️', '🌸', '🦋', '✨', '💛', '🌻']);
+        } else {
+          document.body.className = 'min-h-screen night-mode bg-slate-900 text-violet-50 relative';
+          formTitle.textContent = 'Buenas Noches 🌙';
+          formTitle.style.color = '#c4b5fd';
+          formSubtitle.textContent = 'Cuéntame cómo fue tu día, mi vida';
+          formSubtitle.style.color = '#a78bfa';
+          btnBack.className = 'fixed top-4 left-4 z-20 w-10 h-10 rounded-full flex items-center justify-center bg-slate-800/60 glass shadow-lg hover:scale-110 active:scale-95 transition-transform text-lg text-violet-300';
+          formNight.classList.remove('hidden');
+          formMorning.classList.add('hidden');
+          spawnParticles(['🌙', '⭐', '✨', '💫', '🌟', '💜']);
+        }
+
+        screenForm.style.opacity = '0';
+        requestAnimationFrame(() => {
+          screenForm.style.transition = 'opacity 0.5s ease';
+          screenForm.style.opacity = '1';
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 400);
+    }
+
+    // ─── Back button ───
+    btnBack.addEventListener('click', () => {
+      screenForm.style.opacity = '0';
+      screenForm.style.transition = 'opacity 0.4s ease';
+      setTimeout(() => {
+        screenForm.classList.add('hidden');
+        screenChoice.classList.remove('hidden');
+        applyChoiceBg();
+        screenChoice.style.opacity = '0';
+        requestAnimationFrame(() => {
+          screenChoice.style.transition = 'opacity 0.5s ease';
+          screenChoice.style.opacity = '1';
+        });
+      }, 400);
+    });
+
+
+    // ═══════════════════════════════════════════
+    //  Interactive elements
+    // ═══════════════════════════════════════════
+
+    function setupSingleSelect(containerId, callback) {
+      const container = document.getElementById(containerId);
+      container.querySelectorAll('.emoji-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          container.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          callback(btn.dataset.value);
+        });
+      });
+    }
+    setupSingleSelect('sleep-options', v => selectedSleep = v);
+    setupSingleSelect('vibe-options', v => selectedVibe = v);
+    setupSingleSelect('emotion-options', v => selectedEmotion = v);
+
+    // Stars
+    const stars = document.querySelectorAll('#star-rating .star');
+    const starLabel = document.getElementById('star-label');
+    const starLabels = {
+      1: 'Terrible 😢', 2: 'Muy mal 😞', 3: 'Mal 😕', 4: 'Meh 😐', 5: 'Regular 🙂',
+      6: 'Bien 😊', 7: 'Muy bien 😄', 8: 'Genial! 🤩', 9: 'Increíble ✨', 10: 'PERFECTO 🌟💖'
+    };
+    stars.forEach(star => {
+      star.addEventListener('click', () => {
+        starRating = parseInt(star.dataset.value);
+        stars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.value) <= starRating));
+        starLabel.textContent = starLabels[starRating] || '';
+      });
+      star.addEventListener('mouseenter', () => {
+        const val = parseInt(star.dataset.value);
+        stars.forEach(s => { if (parseInt(s.dataset.value) <= val) s.style.transform = 'scale(1.15)'; });
+      });
+      star.addEventListener('mouseleave', () => {
+        stars.forEach(s => { s.style.transform = s.classList.contains('active') ? 'scale(1.1)' : ''; });
+      });
+    });
+
+    // Checklist styling
+    document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => cb.closest('.check-item').classList.toggle('checked', cb.checked));
+    });
+
+
+    // ═══════════════════════════════════════════
+    //  Particles
+    // ═══════════════════════════════════════════
+
+    function spawnParticles(symbols) {
+      particlesEl.innerHTML = '';
+      for (let i = 0; i < 14; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        p.style.fontSize = (14 + Math.random() * 22) + 'px';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.animation = `float ${5 + Math.random() * 8}s ease-in-out ${Math.random() * 5}s infinite`;
+        particlesEl.appendChild(p);
+      }
+    }
+    spawnParticles(['💕', '💖', '✨', '🌸', '💛', '🦋']);
+
+
+    // ═══════════════════════════════════════════
+    //  Discord Webhook
+    // ═══════════════════════════════════════════
+
+    function collectMorningData() {
+      const map = { bien: '😴 Bien', regular: '🥱 Regular', energia: '🔋 Con energía', cansada: '🤒 Cansada' };
+      const needs = [];
+      document.querySelectorAll('#needs-morning input[type="checkbox"]:checked').forEach(cb => needs.push(cb.value));
+      const other = document.getElementById('needs-morning-other').value.trim();
+      if (other) needs.push(other);
+      return {
+        sleep: map[selectedSleep] || 'Sin respuesta',
+        vibe: selectedVibe || 'Sin respuesta',
+        needs: needs.length ? needs.join(', ') : 'Nada en especial',
+        plan: document.getElementById('plan-dia').value.trim() || 'Sin plan aún',
+        message: document.getElementById('msg-morning').value.trim() || '💛',
+      };
+    }
+
+    function collectNightData() {
+      const map = { mimosa: '🧸 Mimosa', cansada: '🧠 Cansada', feliz: '✨ Feliz', pensativa: '💭 Pensativa' };
+      const needs = [];
+      document.querySelectorAll('#needs-night input[type="checkbox"]:checked').forEach(cb => needs.push(cb.value));
+      const other = document.getElementById('needs-night-other').value.trim();
+      if (other) needs.push(other);
+      return {
+        rating: starRating || 0,
+        emotion: map[selectedEmotion] || 'Sin respuesta',
+        worries: document.getElementById('worries').value.trim() || 'Todo tranquilo 🌿',
+        needs: needs.length ? needs.join(', ') : 'Solo tu amor 💜',
+        message: document.getElementById('msg-night').value.trim() || '🌙💜',
+      };
+    }
+
+    function buildEmbed() {
+      const timestamp = new Date().toISOString();
+      if (currentMode === 'morning') {
+        const d = collectMorningData();
+        return { embeds: [{
+          title: '☀️ Reporte Mañanero de Mi Amor',
+          color: 0xFFB703,
+          thumbnail: { url: 'https://em-content.zobj.net/source/apple/391/sun_2600-fe0f.png' },
+          fields: [
+            { name: '😴 ¿Cómo dormí?', value: d.sleep, inline: true },
+            { name: '✨ Mi vibe hoy', value: d.vibe, inline: true },
+            { name: '\u200b', value: '\u200b' },
+            { name: '💌 Lo que necesito hoy', value: d.needs },
+            { name: '🌆 Plan para hoy', value: d.plan },
+            { name: '☀️ Mensajito de buenos días', value: `> ${d.message}` },
+          ],
+          footer: { text: `💕 Bitácora de Conexión — Mañana  •  Intentos de "no": ${noAttempts}` },
+          timestamp,
+        }] };
+      } else {
+        const d = collectNightData();
+        const bar = '🟣'.repeat(d.rating) + '⚫'.repeat(10 - d.rating);
+        return { embeds: [{
+          title: '🌙 Reporte Nocturno de Mi Amor',
+          color: 0x7209B7,
+          thumbnail: { url: 'https://em-content.zobj.net/source/apple/391/crescent-moon_1f319.png' },
+          fields: [
+            { name: '⭐ Mi día fue un…', value: `${bar}  **${d.rating}/10**` },
+            { name: '💜 Me siento', value: d.emotion, inline: true },
+            { name: '\u200b', value: '\u200b' },
+            { name: '🔮 Para mañana…', value: d.worries },
+            { name: '🛏️ Para dormir tranquila necesito', value: d.needs },
+            { name: '🌙 Mi mensajito de buenas noches', value: `> ${d.message}` },
+          ],
+          footer: { text: `💕 Bitácora de Conexión — Noche  •  Intentos de "no": ${noAttempts}` },
+          timestamp,
+        }] };
+      }
+    }
+
+    // ─── Confetti ───
+    function fireConfetti() {
+      const colors = currentMode === 'night'
+        ? ['#7c3aed', '#a78bfa', '#c4b5fd', '#818cf8', '#e879f9']
+        : ['#fbbf24', '#f59e0b', '#fb923c', '#f472b6', '#e11d48'];
+      confetti({ particleCount: 100, spread: 80, origin: { y: 0.7 }, colors, startVelocity: 35 });
+      setTimeout(() => {
+        confetti({ particleCount: 50, angle: 60, spread: 55, origin: { x: 0 }, colors });
+        confetti({ particleCount: 50, angle: 120, spread: 55, origin: { x: 1 }, colors });
+      }, 250);
+      setTimeout(() => {
+        confetti({ particleCount: 30, spread: 100, origin: { y: 0.6 },
+          shapes: ['circle'], colors: ['#f472b6', '#fb7185', '#e11d48'], scalar: 1.2, gravity: 0.6 });
+      }, 500);
+    }
+
+    // ─── UI helpers ───
+    function showError(msg) {
+      errorMsgEl.textContent = msg;
+      errorToast.classList.remove('opacity-0', 'pointer-events-none');
+      errorToast.classList.add('opacity-100');
+      setTimeout(() => {
+        errorToast.classList.add('opacity-0', 'pointer-events-none');
+        errorToast.classList.remove('opacity-100');
+      }, 4000);
+    }
+
+    function showConfirmation() {
+      if (currentMode === 'night') {
+        confirmCard.className = 'relative z-10 mx-4 max-w-sm w-full rounded-3xl p-8 text-center animate-slide-up bg-slate-800 text-violet-100 border border-violet-500/30';
+        confirmTitle.textContent = '¡Dulces Sueños! 🌙';
+        confirmMsg.innerHTML = '¡Reporte nocturno enviado a nuestro canal!<br/>Descansa bonito, te amo 💜✨';
+      } else {
+        confirmCard.className = 'relative z-10 mx-4 max-w-sm w-full rounded-3xl p-8 text-center animate-slide-up bg-white text-amber-900 border border-amber-200';
+        confirmTitle.textContent = '¡Buenos Días! ☀️';
+        confirmMsg.innerHTML = '¡Reporte mañanero enviado a nuestro canal!<br/>Te amo 💖';
+      }
+      confirmation.classList.remove('opacity-0', 'pointer-events-none');
+      confirmation.classList.add('opacity-100');
+    }
+    confirmClose.addEventListener('click', () => {
+      confirmation.classList.add('opacity-0', 'pointer-events-none');
+      confirmation.classList.remove('opacity-100');
+    });
+
+    // ─── Send ───
+    async function sendToDiscord() {
+      if (DISCORD_WEBHOOK_URL === "TU_WEBHOOK_AQUI" || !DISCORD_WEBHOOK_URL) {
+        showError('⚠️ Configura el Webhook de Discord primero');
+        return;
+      }
+      const payload = buildEmbed();
+      try {
+        const res = await fetch(DISCORD_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error(`Discord respondió con ${res.status}`);
+        fireConfetti();
+        setTimeout(showConfirmation, 600);
+      } catch (err) {
+        console.error('Error enviando a Discord:', err);
+        showError(`Error: ${err.message}`);
+      }
+    }
+
+    formMorning.addEventListener('submit', e => { e.preventDefault(); sendToDiscord(); });
+    formNight.addEventListener('submit', e => { e.preventDefault(); sendToDiscord(); });
+  </script>
+</body>
+</html>
