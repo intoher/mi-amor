@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔧 Enviar Botones a Discord</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>body { font-family: 'Quicksand', sans-serif; }</style>
+</head>
+<body class="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center p-6">
+
+  <div class="max-w-lg w-full bg-slate-800 rounded-3xl p-8 shadow-2xl border border-slate-700">
+    <h1 class="text-2xl font-bold text-center mb-2">🔧 Enviar Botones al Canal</h1>
+    <p class="text-sm text-slate-400 text-center mb-6">
+      Esto enviará un mensaje con los botones "Me desperté" y "Me voy a dormir" al canal de Discord.
+    </p>
+
+    <label class="block text-sm font-semibold mb-2 text-slate-300">
+      🌐 URL donde hospedas la página <span class="text-rose-400">*</span>
+    </label>
+    <input id="page-url" type="url" placeholder="https://tu-usuario.github.io/bitacora/"
+           class="w-full rounded-xl bg-slate-700 border border-slate-600 px-4 py-3 text-sm
+                  placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500 mb-6" />
+
+    <div id="preview" class="bg-slate-950 rounded-xl p-4 mb-6 border border-slate-700">
+      <p class="text-xs text-slate-500 mb-2">Vista previa del mensaje:</p>
+      <div class="bg-[#2b2d31] rounded-lg p-4 border border-[#3a3c42]">
+        <div class="border-l-4 border-pink-400 pl-3">
+          <p class="font-bold text-pink-300 text-sm">💕 Bitácora de Conexión</p>
+          <p class="text-slate-300 text-xs mt-1">¡Hola mi amor! 🥰<br>Cuando te despiertes o te vayas a dormir, pulsa el botón que toque y cuéntame cómo estás. ¡Te amo! 💖</p>
+        </div>
+        <div class="flex gap-2 mt-3">
+          <span class="px-3 py-1.5 rounded text-xs font-semibold bg-[#5865F2] text-white">☀️ Me desperté</span>
+          <span class="px-3 py-1.5 rounded text-xs font-semibold bg-[#5865F2] text-white">🌙 Me voy a dormir</span>
+        </div>
+      </div>
+    </div>
+
+    <button id="btn-send"
+            class="w-full py-4 rounded-xl font-bold text-lg text-white
+                   bg-gradient-to-r from-violet-500 to-indigo-500
+                   hover:from-violet-600 hover:to-indigo-600
+                   active:scale-[0.97] transition-all shadow-xl">
+      Enviar al Canal de Discord 🚀
+    </button>
+
+    <div id="status" class="mt-4 text-center text-sm hidden"></div>
+  </div>
+
+  <script>
+    const WEBHOOK = "https://discord.com/api/webhooks/1542153169830674622/qW2PzZtopOgzFVVMt3S2u8eXKH00vY1uK1Q2VSZKG6vbrMkFKckItwTlBAudxSKt0Z7V";
+
+    document.getElementById('btn-send').addEventListener('click', async () => {
+      const baseUrl = document.getElementById('page-url').value.trim();
+      const status = document.getElementById('status');
+
+      if (!baseUrl) {
+        status.className = 'mt-4 text-center text-sm text-red-400';
+        status.textContent = '⚠️ Escribe primero la URL donde hospedas la página.';
+        status.classList.remove('hidden');
+        return;
+      }
+
+      // Clean trailing slash
+      const url = baseUrl.replace(/\/+$/, '');
+
+      const payload = {
+        embeds: [{
+          title: "💕 Bitácora de Conexión",
+          description: "¡Hola mi amor! 🥰\nCuando te despiertes o te vayas a dormir, pulsa el botón que toque y cuéntame cómo estás. ¡Te amo! 💖",
+          color: 0xF472B6,
+          footer: { text: "Hecho con amor 💕" },
+        }],
+        components: [{
+          type: 1, // ActionRow
+          components: [
+            {
+              type: 2,    // Button
+              style: 5,   // Link
+              label: "☀️ Me desperté",
+              url: url + "?mode=morning"
+            },
+            {
+              type: 2,
+              style: 5,
+              label: "🌙 Me voy a dormir",
+              url: url + "?mode=night"
+            }
+          ]
+        }]
+      };
+
+      status.className = 'mt-4 text-center text-sm text-slate-400';
+      status.textContent = 'Enviando...';
+      status.classList.remove('hidden');
+
+      try {
+        const res = await fetch(WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          const err = await res.text();
+          throw new Error(`Discord respondió con ${res.status}: ${err}`);
+        }
+
+        status.className = 'mt-4 text-center text-sm text-green-400';
+        status.textContent = '✅ ¡Mensaje enviado al canal! Ve a Discord y comprueba que aparezca.';
+      } catch (err) {
+        console.error(err);
+        status.className = 'mt-4 text-center text-sm text-red-400';
+        status.textContent = '❌ Error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
