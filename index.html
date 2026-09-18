@@ -3,98 +3,103 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>💕 Bitácora de Conexión</title>
-  <meta name="description" content="Bitácora romántica de conexión diaria para parejas a distancia." />
+  <title>⚡ Bitácora de Conexión — Cyberpunk Edition</title>
+  <meta name="description" content="Bitácora romántica Cyberpunk de conexión diaria para parejas a distancia." />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Quicksand:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
             body: ['Quicksand', 'sans-serif'],
-            script: ['Dancing Script', 'cursive'],
+            display: ['Rajdhani', 'sans-serif'],
+            mono: ['Fira Code', 'monospace'],
           },
+          colors: {
+            cyber: {
+              black: '#08090d',
+              card: '#11131c',
+              pink: '#ff007f',
+              cyan: '#00f0ff',
+              purple: '#9d4edd',
+              amber: '#ffb703',
+            }
+          }
         },
       },
     };
   </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
-    body { font-family: 'Quicksand', sans-serif; overflow-x: hidden; }
+    body { font-family: 'Quicksand', sans-serif; background-color: #08090d; color: #e2e8f0; overflow-x: hidden; }
 
-    /* ── Animations ── */
+    /* Cyberpunk Scanlines & Grid overlay */
+    .cyber-grid {
+      background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+    
+    .cyber-card {
+      background: rgba(17, 19, 28, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(0, 240, 255, 0.18);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      position: relative;
+    }
+    .cyber-card::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 10px; width: 40px; height: 2px;
+      background: #ff007f;
+      box-shadow: 0 0 8px #ff007f;
+    }
+    
+    .cyber-card-pink {
+      border: 1px solid rgba(255, 0, 127, 0.25);
+    }
+    .cyber-card-pink::before {
+      background: #00f0ff;
+      box-shadow: 0 0 8px #00f0ff;
+    }
+
+    /* Glows */
+    .glow-pink { box-shadow: 0 0 20px rgba(255, 0, 127, 0.4), inset 0 0 10px rgba(255, 0, 127, 0.2); }
+    .glow-cyan { box-shadow: 0 0 20px rgba(0, 240, 255, 0.4), inset 0 0 10px rgba(0, 240, 255, 0.2); }
+    
+    /* Animations */
+    @keyframes pulse-neon {
+      0%, 100% { text-shadow: 0 0 8px rgba(255, 0, 127, 0.8), 0 0 20px rgba(255, 0, 127, 0.4); }
+      50% { text-shadow: 0 0 15px rgba(0, 240, 255, 0.9), 0 0 30px rgba(0, 240, 255, 0.5); }
+    }
     @keyframes float {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-18px) rotate(3deg); }
-    }
-    @keyframes pulse-heart {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.15); }
-    }
-    @keyframes slide-up {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes slide-down-out {
-      from { opacity: 1; transform: translateY(0); }
-      to { opacity: 0; transform: translateY(-60px) scale(0.9); }
-    }
-    @keyframes wiggle {
-      0%, 100% { transform: rotate(-4deg); }
-      50% { transform: rotate(4deg); }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
     }
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       20% { transform: translateX(-8px) rotate(-2deg); }
       40% { transform: translateX(8px) rotate(2deg); }
-      60% { transform: translateX(-5px) rotate(-1deg); }
-      80% { transform: translateX(5px) rotate(1deg); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
     }
     @keyframes sparkle-in {
-      0% { opacity: 0; transform: scale(0.5) rotate(-10deg); }
-      60% { transform: scale(1.1) rotate(2deg); }
-      100% { opacity: 1; transform: scale(1) rotate(0deg); }
-    }
-    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes bounce-in {
-      0% { transform: scale(0); opacity: 0; }
-      50% { transform: scale(1.15); }
-      70% { transform: scale(0.95); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    @keyframes glow-morning {
-      0% { box-shadow: 0 0 10px rgba(251,191,36,0.3), 0 0 30px rgba(251,191,36,0.1); }
-      100% { box-shadow: 0 0 20px rgba(251,191,36,0.5), 0 0 50px rgba(251,191,36,0.2); }
-    }
-    @keyframes glow-night {
-      0% { box-shadow: 0 0 10px rgba(139,92,246,0.3), 0 0 30px rgba(139,92,246,0.1); }
-      100% { box-shadow: 0 0 20px rgba(139,92,246,0.5), 0 0 50px rgba(139,92,246,0.2); }
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
     }
 
+    .animate-pulse-neon { animation: pulse-neon 3s ease-in-out infinite; }
     .animate-float { animation: float 6s ease-in-out infinite; }
-    .animate-pulse-heart { animation: pulse-heart 2s ease-in-out infinite; }
-    .animate-slide-up { animation: slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
-    .animate-slide-down-out { animation: slide-down-out 0.5s ease-in both; }
-    .animate-wiggle { animation: wiggle 1s ease-in-out infinite; }
     .animate-shake { animation: shake 0.5s ease-in-out; }
-    .animate-sparkle-in { animation: sparkle-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
-    .animate-fade-in { animation: fade-in 0.5s ease-out both; }
-    .animate-bounce-in { animation: bounce-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
-    .animate-glow-morning { animation: glow-morning 2s ease-in-out infinite alternate; }
-    .animate-glow-night { animation: glow-night 2s ease-in-out infinite alternate; }
+    .animate-sparkle-in { animation: sparkle-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
-    /* ── Delay utilities ── */
-    .delay-100 { animation-delay: 0.1s; }
-    .delay-200 { animation-delay: 0.2s; }
-    .delay-300 { animation-delay: 0.3s; }
-    .delay-400 { animation-delay: 0.4s; }
-    .delay-500 { animation-delay: 0.5s; }
-
-    /* ── Fleeing No button ── */
+    /* Fleeing No button */
     #btn-no {
       position: absolute;
       transition: all 0.001s;
@@ -103,28 +108,29 @@
       touch-action: none;
     }
 
-    /* ── Emoji select buttons ── */
-    .emoji-btn {
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Option buttons */
+    .option-btn {
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       cursor: pointer;
     }
-    .emoji-btn:hover { transform: scale(1.12); }
-    .emoji-btn:active { transform: scale(0.95); }
-    .emoji-btn.selected {
-      transform: scale(1.08);
-      box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.6);
+    .option-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      border-color: #00f0ff;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
     }
-    .night-mode .emoji-btn.selected {
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.6);
+    .option-btn.selected {
+      transform: scale(1.04);
+      border-color: #ff007f !important;
+      background: rgba(255, 0, 127, 0.15) !important;
+      box-shadow: 0 0 20px rgba(255, 0, 127, 0.5) !important;
     }
 
-    /* ── Checklist ── */
-    .check-item { transition: all 0.3s ease; cursor: pointer; }
-    .check-item:hover { transform: translateX(4px); }
-    .check-item.checked { background: rgba(251, 191, 36, 0.15); }
-    .night-mode .check-item.checked { background: rgba(139, 92, 246, 0.2); }
+    /* Checklist */
+    .check-item { transition: all 0.25s ease; cursor: pointer; }
+    .check-item:hover { transform: translateX(4px); border-color: rgba(0, 240, 255, 0.4); }
+    .check-item.checked { background: rgba(0, 240, 255, 0.12); border-color: #00f0ff; }
 
-    /* ── Stars ── */
+    /* Star rating */
     .star {
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -134,45 +140,30 @@
     .star:hover { transform: scale(1.3); }
     .star.active { filter: grayscale(0) opacity(1); transform: scale(1.1); }
 
-    /* ── Glass ── */
-    .glass { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
-
-    /* ── Scrollbar ── */
+    /* Scrollbar */
     textarea::-webkit-scrollbar { width: 6px; }
-    textarea::-webkit-scrollbar-track { background: transparent; }
-    textarea::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
-    .night-mode textarea::-webkit-scrollbar-thumb { background: #4b5563; }
+    textarea::-webkit-scrollbar-track { background: #08090d; }
+    textarea::-webkit-scrollbar-thumb { background: #00f0ff; border-radius: 3px; }
 
-    /* ── Particles ── */
-    .particle { position: fixed; pointer-events: none; opacity: 0.12; z-index: 0; }
+    /* Particles */
+    .particle { position: fixed; pointer-events: none; opacity: 0.25; z-index: 0; }
 
-    /* ── Send button ripple ── */
-    .send-btn { position: relative; overflow: hidden; }
-    .send-btn::before {
-      content: '';
-      position: absolute; top: 50%; left: 50%;
-      width: 0; height: 0;
-      background: rgba(255,255,255,0.2);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
-    }
-    .send-btn:hover::before { width: 300px; height: 300px; }
-
-    /* ── Screen transitions ── */
     .screen { transition: opacity 0.4s ease, transform 0.4s ease; }
     .screen.hidden { display: none !important; }
 
-    /* ── No-attempt counter ── */
-    .no-counter {
-      position: fixed; bottom: 16px; right: 16px;
-      font-size: 0.75rem; opacity: 0.4;
-      z-index: 10; pointer-events: none;
+    /* Admin Editable Highlight */
+    .admin-mode [data-editable] {
+      outline: 2px dashed #00f0ff !important;
+      outline-offset: 2px;
+      cursor: pointer;
+    }
+    .admin-mode [data-editable]:hover {
+      background: rgba(0, 240, 255, 0.2) !important;
     }
   </style>
 </head>
 
-<body class="min-h-screen bg-gradient-to-br from-pink-100 via-rose-50 to-amber-50 text-rose-950 relative">
+<body class="min-h-screen cyber-grid text-slate-100 relative">
 
   <!-- Floating particles -->
   <div id="particles" class="fixed inset-0 pointer-events-none z-0"></div>
@@ -183,192 +174,214 @@
   <div id="screen-love" class="screen fixed inset-0 z-40 flex flex-col items-center justify-center px-6"
        style="background-image: url('foto.png'); background-size: cover; background-position: center;">
 
-    <!-- Dark romantic overlay for readability -->
-    <div class="absolute inset-0 bg-gradient-to-t from-pink-950/70 via-black/40 to-pink-950/60 z-0"></div>
+    <!-- Dark Cyberpunk Overlay -->
+    <div class="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-950/75 to-slate-950/90 backdrop-blur-[3px] z-0"></div>
 
-    <!-- Big heart -->
-    <div class="relative z-10 text-8xl mb-6 animate-pulse-heart select-none">💖</div>
+    <!-- Top Badge -->
+    <div class="relative z-10 font-mono text-xs text-cyan-400 bg-cyan-950/60 px-4 py-1.5 rounded-full border border-cyan-500/30 mb-6 tracking-widest uppercase">
+      ⚡ SECURITY_PROTOCOL // LOVE_GATE ⚡
+    </div>
 
     <!-- Question -->
-    <h1 class="relative z-10 font-script text-5xl md:text-6xl text-white mb-2 animate-sparkle-in text-center drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+    <h1 id="txt-s1-title" data-editable="s1-title" class="relative z-10 font-display font-bold text-5xl md:text-6xl text-white mb-2 text-center tracking-wide animate-pulse-neon">
       ¿Me quieres?
     </h1>
-    <p class="relative z-10 text-pink-200 text-sm mb-10 animate-fade-in delay-300 opacity-0 drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]" style="animation-fill-mode:both;">
-      Tienes que ser sincera...
+    <p id="txt-s1-sub" data-editable="s1-sub" class="relative z-10 text-cyan-300/80 font-mono text-xs md:text-sm mb-10 text-center tracking-wider">
+      [Respuesta requerida para desbloquear el sistema...]
     </p>
 
     <!-- Sí button -->
     <button id="btn-si"
-            class="relative z-10 px-14 py-5 rounded-2xl font-bold text-xl text-white
-                   bg-gradient-to-r from-rose-400 via-pink-500 to-fuchsia-500
-                   hover:from-rose-500 hover:via-pink-600 hover:to-fuchsia-600
-                   shadow-2xl shadow-pink-300/50
-                   active:scale-95 transition-transform duration-200
-                   animate-bounce-in delay-400 opacity-0"
-            style="animation-fill-mode:both;">
-      ¡Sí, mucho! 🥰💕
+            class="relative z-10 px-12 py-5 rounded-2xl font-display font-bold text-xl text-white
+                   bg-gradient-to-r from-pink-600 via-fuchsia-600 to-cyan-500
+                   hover:from-pink-500 hover:to-cyan-400
+                   border-2 border-pink-400/50 glow-pink
+                   active:scale-95 transition-all duration-200">
+      SÍ, TE ADORO 💖 (Desbloquear)
     </button>
 
     <!-- No button (fleeing) -->
     <button id="btn-no"
-            class="mt-6 px-10 py-4 rounded-2xl font-bold text-lg text-rose-600 bg-white/90
-                   border-2 border-rose-200 hover:bg-white hover:border-rose-300
-                   shadow-lg active:scale-95 transition-all
-                   animate-fade-in delay-500 opacity-0 relative z-20"
-            style="animation-fill-mode:both;">
-      No 😢
+            class="mt-6 px-8 py-3.5 rounded-2xl font-bold text-sm text-cyan-300 bg-slate-900/90
+                   border-2 border-cyan-500/40 hover:bg-slate-800 shadow-lg active:scale-95 transition-all relative z-20">
+      No, soy un bot 🤖
     </button>
 
-    <!-- Attempts counter (hidden easter egg) -->
-    <div id="no-counter" class="no-counter text-pink-200"></div>
+    <!-- Counter -->
+    <div id="no-counter" class="fixed bottom-4 right-4 text-xs font-mono text-pink-400/60 z-10"></div>
 
-    <!-- Tease messages that appear when she tries to click No -->
-    <p id="tease-msg" class="fixed bottom-20 left-0 right-0 text-center text-sm font-semibold text-pink-200
-                             opacity-0 transition-opacity duration-300 z-50 pointer-events-none px-4 drop-shadow"></p>
+    <!-- Tease messages -->
+    <p id="tease-msg" class="fixed bottom-20 left-0 right-0 text-center font-mono text-sm font-semibold text-cyan-400
+                             opacity-0 transition-opacity duration-300 z-50 pointer-events-none px-4 drop-shadow-md"></p>
   </div>
 
 
   <!-- ═══════════════════════════════════════════════════
-       SCREEN 2 — Action Choice (Desperté / Dormir)
+       SCREEN 2 — Choice Screen (Morning / Night)
        ═══════════════════════════════════════════════════ -->
   <div id="screen-choice" class="screen hidden fixed inset-0 z-30 flex flex-col items-center justify-center px-6">
 
-    <!-- After saying Sí, a lovey message -->
-    <div class="text-6xl mb-4 animate-wiggle select-none">🥰</div>
-    <h2 id="love-response" class="font-script text-4xl md:text-5xl text-center mb-2 animate-sparkle-in">
-      ¡Lo sabía! 💕
+    <div class="font-mono text-xs text-pink-400 bg-pink-950/60 px-4 py-1.5 rounded-full border border-pink-500/30 mb-6 tracking-widest uppercase">
+      SYSTEM.STATUS // ACCESS_GRANTED
+    </div>
+
+    <h2 class="font-display font-bold text-4xl md:text-5xl text-center text-white mb-2 animate-sparkle-in">
+      ¡Lo sabía, gatita! 💕
     </h2>
-    <p class="text-sm opacity-60 mb-12 animate-fade-in delay-200 text-center" style="animation-fill-mode:both;">
-      Ahora cuéntame, ¿qué estás haciendo?
+    <p class="text-sm font-mono text-cyan-300/80 mb-10 text-center">
+      Selecciona el informe a completar:
     </p>
 
-    <div class="flex flex-col sm:flex-row gap-5 w-full max-w-md animate-slide-up delay-300" style="animation-fill-mode:both;">
+    <div class="flex flex-col sm:flex-row gap-6 w-full max-w-md animate-sparkle-in">
       <!-- Woke up -->
       <button id="btn-wakeup"
-              class="flex-1 py-8 px-6 rounded-3xl text-center font-bold text-lg
-                     bg-gradient-to-br from-amber-100 via-yellow-50 to-orange-100
-                     border-2 border-amber-200/70
-                     shadow-xl shadow-amber-200/40
-                     hover:shadow-2xl hover:shadow-amber-300/50 hover:-translate-y-1
-                     active:scale-[0.97]
-                     transition-all duration-300 text-amber-800">
+              class="flex-1 py-8 px-6 rounded-3xl text-center font-display font-bold text-xl
+                     cyber-card hover:border-amber-400 hover:shadow-[0_0_25px_rgba(255,183,3,0.3)]
+                     active:scale-95 transition-all text-amber-300">
         <div class="text-5xl mb-3">☀️</div>
-        <div>Me desperté</div>
-        <div class="text-xs font-normal opacity-60 mt-1">Buenos días, mi amor</div>
+        <div>ME DESPERTÉ</div>
+        <div class="text-xs font-mono font-normal text-amber-200/60 mt-2">Reporte de mañana</div>
       </button>
 
       <!-- Going to sleep -->
       <button id="btn-sleep"
-              class="flex-1 py-8 px-6 rounded-3xl text-center font-bold text-lg
-                     bg-gradient-to-br from-indigo-900 via-violet-900 to-purple-900
-                     border-2 border-violet-500/30
-                     shadow-xl shadow-violet-900/40
-                     hover:shadow-2xl hover:shadow-violet-700/50 hover:-translate-y-1
-                     active:scale-[0.97]
-                     transition-all duration-300 text-violet-100">
+              class="flex-1 py-8 px-6 rounded-3xl text-center font-display font-bold text-xl
+                     cyber-card cyber-card-pink hover:border-fuchsia-400 hover:shadow-[0_0_25px_rgba(255,0,127,0.3)]
+                     active:scale-95 transition-all text-fuchsia-300">
         <div class="text-5xl mb-3">🌙</div>
-        <div>Me voy a dormir</div>
-        <div class="text-xs font-normal opacity-60 mt-1">Buenas noches, mi vida</div>
+        <div>ME VOY A DORMIR</div>
+        <div class="text-xs font-mono font-normal text-fuchsia-200/60 mt-2">Reporte de noche</div>
       </button>
     </div>
   </div>
 
 
   <!-- ═══════════════════════════════════════════════════
-       SCREEN 3 — Form (Morning or Night)
+       SCREEN 3 — Forms Screen
        ═══════════════════════════════════════════════════ -->
   <div id="screen-form" class="screen hidden min-h-screen relative z-10">
 
     <!-- Back button -->
     <button id="btn-back"
-            class="fixed top-4 left-4 z-20 w-10 h-10 rounded-full flex items-center justify-center
-                   bg-white/60 dark:bg-slate-800/60 glass shadow-lg
-                   hover:scale-110 active:scale-95 transition-transform text-lg">
-      ←
+            class="fixed top-4 left-4 z-20 px-4 py-2 rounded-xl flex items-center gap-2
+                   cyber-card text-xs font-mono text-cyan-400 hover:border-cyan-400 transition-transform">
+      ← VOLVER
+    </button>
+
+    <!-- Admin toggle button -->
+    <button id="btn-admin-toggle" title="Abrir Modo Editor Admin"
+            class="fixed top-4 right-4 z-20 px-3 py-2 rounded-xl cyber-card text-xs font-mono text-pink-400 hover:border-pink-400 transition-transform">
+      🛠️ ADMIN
     </button>
 
     <!-- Header -->
-    <header class="pt-14 pb-4 px-4 text-center">
-      <h1 id="form-title" class="font-script text-4xl md:text-5xl mb-1 animate-sparkle-in"></h1>
-      <p id="form-subtitle" class="text-sm opacity-60 animate-fade-in delay-100" style="animation-fill-mode:both;"></p>
+    <header class="pt-16 pb-6 px-4 text-center">
+      <div id="form-badge" class="inline-block font-mono text-xs px-3 py-1 rounded-full border mb-2"></div>
+      <h1 id="form-title" class="font-display font-bold text-4xl md:text-5xl tracking-wide"></h1>
+      <p id="form-subtitle" class="text-sm font-mono opacity-80 mt-1"></p>
     </header>
 
-    <main class="px-4 pb-12">
+    <main class="px-4 pb-16">
       <div class="max-w-lg mx-auto">
 
         <!-- ─── MORNING FORM ─── -->
-        <form id="form-morning" class="space-y-5 hidden">
+        <form id="form-morning" class="space-y-6 hidden">
 
-          <!-- Q1 -->
-          <div class="glass rounded-2xl p-5 bg-white/60 border border-amber-200/50 shadow-lg shadow-amber-100/40 animate-slide-up">
-            <label class="block font-semibold text-base mb-3">🌅 ¿Cómo dormiste y te sientes físicamente?</label>
+          <!-- Q1 Sleep -->
+          <div class="cyber-card rounded-2xl p-5 space-y-3">
+            <div class="font-mono text-xs text-amber-400">[SYS.MORNING // Q1]</div>
+            <label class="block font-display font-semibold text-lg text-white">🌅 ¿Qué tal las sábanas anoche? ¿Cómo despertó ese cuerpito?</label>
             <div id="sleep-options" class="grid grid-cols-2 gap-3">
-              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-amber-100/80 border-2 border-transparent text-center font-medium text-sm" data-value="bien">😴 Bien</button>
-              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-amber-100/80 border-2 border-transparent text-center font-medium text-sm" data-value="regular">🥱 Regular</button>
-              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-amber-100/80 border-2 border-transparent text-center font-medium text-sm" data-value="energia">🔋 Con energía</button>
-              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-amber-100/80 border-2 border-transparent text-center font-medium text-sm" data-value="cansada">🤒 Cansada</button>
+              <button type="button" class="option-btn rounded-xl py-3 px-4 bg-slate-900/80 border border-slate-700 text-center font-medium text-xs text-slate-200" data-value="bien">😴 Dormí como un angelito</button>
+              <button type="button" class="option-btn rounded-xl py-3 px-4 bg-slate-900/80 border border-slate-700 text-center font-medium text-xs text-slate-200" data-value="regular">🥱 A medias, me costó</button>
+              <button type="button" class="option-btn rounded-xl py-3 px-4 bg-slate-900/80 border border-slate-700 text-center font-medium text-xs text-slate-200" data-value="energia">⚡ ¡Pilas a tope y lista!</button>
+              <button type="button" class="option-btn rounded-xl py-3 px-4 bg-slate-900/80 border border-slate-700 text-center font-medium text-xs text-slate-200" data-value="cansada">🤒 Cansadita modo zombi</button>
             </div>
           </div>
 
-          <!-- Q2 -->
-          <div class="glass rounded-2xl p-5 bg-white/60 border border-amber-200/50 shadow-lg shadow-amber-100/40 animate-slide-up delay-100" style="animation-fill-mode:both;">
-            <label class="block font-semibold text-base mb-3">✨ ¿Cuál es tu vibe hoy?</label>
-            <div id="vibe-options" class="flex flex-wrap gap-3 justify-center">
-              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="😊">😊</button>
-              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="🥰">🥰</button>
-              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="😤">😤</button>
-              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="🤗">🤗</button>
-              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="😌">😌</button>
-              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="🌸">🌸</button>
-              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="💪">💪</button>
-              <button type="button" class="emoji-btn rounded-full w-14 h-14 text-2xl bg-amber-100/80 border-2 border-transparent flex items-center justify-center" data-value="🫠">🫠</button>
+          <!-- Q2 Vibe -->
+          <div class="cyber-card rounded-2xl p-5 space-y-3">
+            <div class="font-mono text-xs text-amber-400">[SYS.MORNING // Q2]</div>
+            <label class="block font-display font-semibold text-lg text-white">✨ ¿Qué sintonía traes hoy en esa cabecita?</label>
+            <div id="vibe-options" class="grid grid-cols-2 gap-2">
+              <button type="button" class="option-btn rounded-xl py-2.5 px-3 bg-slate-900/80 border border-slate-700 text-left text-xs font-medium text-slate-200 flex items-center gap-2" data-value="😈 Modo traviesa"><span>😈</span> Modo traviesa</button>
+              <button type="button" class="option-btn rounded-xl py-2.5 px-3 bg-slate-900/80 border border-slate-700 text-left text-xs font-medium text-slate-200 flex items-center gap-2" data-value="🥰 Enamoradísima"><span>🥰</span> Enamoradísima</button>
+              <button type="button" class="option-btn rounded-xl py-2.5 px-3 bg-slate-900/80 border border-slate-700 text-left text-xs font-medium text-slate-200 flex items-center gap-2" data-value="😤 Modo guerrera"><span>😤</span> Modo guerrera</button>
+              <button type="button" class="option-btn rounded-xl py-2.5 px-3 bg-slate-900/80 border border-slate-700 text-left text-xs font-medium text-slate-200 flex items-center gap-2" data-value="🤗 Mimosona 100%"><span>🤗</span> Mimosona 100%</button>
+              <button type="button" class="option-btn rounded-xl py-2.5 px-3 bg-slate-900/80 border border-slate-700 text-left text-xs font-medium text-slate-200 flex items-center gap-2" data-value="😌 Paz y café"><span>😌</span> Paz y café</button>
+              <button type="button" class="option-btn rounded-xl py-2.5 px-3 bg-slate-900/80 border border-slate-700 text-left text-xs font-medium text-slate-200 flex items-center gap-2" data-value="🌸 Chill y zen"><span>🌸</span> Chill y zen</button>
+              <button type="button" class="option-btn rounded-xl py-2.5 px-3 bg-slate-900/80 border border-slate-700 text-left text-xs font-medium text-slate-200 flex items-center gap-2" data-value="💪 A por todo"><span>💪</span> A por todo</button>
+              <button type="button" class="option-btn rounded-xl py-2.5 px-3 bg-slate-900/80 border border-slate-700 text-left text-xs font-medium text-slate-200 flex items-center gap-2" data-value="🫠 Derretida"><span>🫠</span> Derretida / Plis</button>
             </div>
           </div>
 
-          <!-- Q3 -->
-          <div class="glass rounded-2xl p-5 bg-white/60 border border-amber-200/50 shadow-lg shadow-amber-100/40 animate-slide-up delay-200" style="animation-fill-mode:both;">
-            <label class="block font-semibold text-base mb-3">💌 ¿Qué necesitas de mí hoy?</label>
+          <!-- Q3 Dream -->
+          <div class="cyber-card rounded-2xl p-5 space-y-3">
+            <div class="font-mono text-xs text-amber-400">[SYS.MORNING // Q3]</div>
+            <label class="block font-display font-semibold text-lg text-white">💭 ¿Qué soñaste anoche? ¿Salí en tu película mental?</label>
+            <textarea id="msg-dream" rows="3" placeholder="Cuéntame tu sueño..."
+                      class="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-amber-100 placeholder:text-slate-600 focus:outline-none focus:border-amber-400 resize-none"></textarea>
+          </div>
+
+          <!-- Q4 Esex -->
+          <div class="cyber-card rounded-2xl p-5 space-y-3 border-pink-500/30">
+            <div class="font-mono text-xs text-pink-400">[SYS.MORNING // Q4]</div>
+            <label class="block font-display font-semibold text-lg text-pink-200">🔥 ¿Ganas de esex hoy? 😏</label>
+            <div id="esex-options" class="grid grid-cols-2 gap-3">
+              <button type="button" class="option-btn rounded-xl py-3 px-3 bg-slate-900/80 border border-slate-700 text-center font-medium text-xs text-slate-200" data-value="0% - Santita hoy">😇 0% Santita hoy</button>
+              <button type="button" class="option-btn rounded-xl py-3 px-3 bg-slate-900/80 border border-slate-700 text-center font-medium text-xs text-slate-200" data-value="50% - Si te pones coqueto...">😏 50% Si provocas...</button>
+              <button type="button" class="option-btn rounded-xl py-3 px-3 bg-slate-900/80 border border-slate-700 text-center font-medium text-xs text-slate-200" data-value="80% - Bastantes ganas">🔥 80% Bastantes ganas</button>
+              <button type="button" class="option-btn rounded-xl py-3 px-3 bg-slate-900/80 border border-slate-700 text-center font-medium text-xs text-slate-200" data-value="1000% - Urgencia nacional">🌋 1000% Urgencia total</button>
+            </div>
+          </div>
+
+          <!-- Q5 Needs -->
+          <div class="cyber-card rounded-2xl p-5 space-y-3">
+            <div class="font-mono text-xs text-amber-400">[SYS.MORNING // Q5]</div>
+            <label class="block font-display font-semibold text-lg text-white">👉 ¿Qué te apetece que haga por ti hoy?</label>
             <div id="needs-morning" class="space-y-2">
-              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-amber-50/80"><input type="checkbox" value="Espacio" class="w-5 h-5 rounded accent-amber-500" /><span class="text-sm font-medium">🫧 Espacio tranquilo</span></label>
-              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-amber-50/80"><input type="checkbox" value="Mensajitos" class="w-5 h-5 rounded accent-amber-500" /><span class="text-sm font-medium">💬 Mensajitos bonitos</span></label>
-              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-amber-50/80"><input type="checkbox" value="Llamada" class="w-5 h-5 rounded accent-amber-500" /><span class="text-sm font-medium">📞 Una llamadita</span></label>
-              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-amber-50/80"><input type="checkbox" value="Memes" class="w-5 h-5 rounded accent-amber-500" /><span class="text-sm font-medium">😂 Memes y risas</span></label>
-              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-amber-50/80"><input type="checkbox" value="Motivación" class="w-5 h-5 rounded accent-amber-500" /><span class="text-sm font-medium">🔥 Motivación y ánimos</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-900/60 border border-slate-800"><input type="checkbox" value="Espacio" class="w-4 h-4 accent-amber-400" /><span class="text-xs font-medium">🫧 Darte tu espacio tranqui</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-900/60 border border-slate-800"><input type="checkbox" value="Mensajitos" class="w-4 h-4 accent-amber-400" /><span class="text-xs font-medium">💬 Llenarte de mensajitos cursis</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-900/60 border border-slate-800"><input type="checkbox" value="Llamada" class="w-4 h-4 accent-amber-400" /><span class="text-xs font-medium">📞 Una llamadita para ver esa carita</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-900/60 border border-slate-800"><input type="checkbox" value="Memes" class="w-4 h-4 accent-amber-400" /><span class="text-xs font-medium">😹 Mandarte memes y tonterías</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-900/60 border border-slate-800"><input type="checkbox" value="Motivación" class="w-4 h-4 accent-amber-400" /><span class="text-xs font-medium">🔥 Animarte y recordarte lo diosa que eres</span></label>
             </div>
-            <input id="needs-morning-other" type="text" placeholder="Algo más que necesites..."
-                   class="mt-3 w-full rounded-xl border border-amber-200 bg-white/70 px-4 py-2.5 text-sm placeholder:text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-300" />
+            <input id="needs-morning-other" type="text" placeholder="Algo más..."
+                   class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-2.5 text-xs text-amber-100 placeholder:text-slate-600 focus:outline-none focus:border-amber-400" />
           </div>
 
-          <!-- Q4 -->
-          <div class="glass rounded-2xl p-5 bg-white/60 border border-amber-200/50 shadow-lg shadow-amber-100/40 animate-slide-up delay-300" style="animation-fill-mode:both;">
-            <label class="block font-semibold text-base mb-3">🌆 ¿Cuál es tu plan para hoy?</label>
-            <textarea id="plan-dia" rows="3" placeholder="Cuéntame qué tienes planeado..."
-                      class="w-full rounded-xl border border-amber-200 bg-white/70 px-4 py-3 text-sm placeholder:text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-300 resize-none"></textarea>
+          <!-- Q6 Plan -->
+          <div class="cyber-card rounded-2xl p-5 space-y-3">
+            <div class="font-mono text-xs text-amber-400">[SYS.MORNING // Q6]</div>
+            <label class="block font-display font-semibold text-lg text-white">🎬 ¿Qué planes o ideas tienes para cuando caiga el sol?</label>
+            <textarea id="plan-dia" rows="3" placeholder="Cuéntame qué planes tienes..."
+                      class="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-amber-100 placeholder:text-slate-600 focus:outline-none focus:border-amber-400 resize-none"></textarea>
           </div>
 
-          <!-- Q5 -->
-          <div class="glass rounded-2xl p-5 bg-white/60 border border-amber-200/50 shadow-lg shadow-amber-100/40 animate-slide-up delay-400" style="animation-fill-mode:both;">
-            <label class="block font-semibold text-base mb-3">☀️ Tu mensajito de buenos días</label>
-            <textarea id="msg-morning" rows="4" placeholder="Escribe algo bonito para empezar el día juntos..."
-                      class="w-full rounded-xl border border-amber-200 bg-white/70 px-4 py-3 text-sm placeholder:text-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-300 resize-none"></textarea>
+          <!-- Q7 Msg -->
+          <div class="cyber-card rounded-2xl p-5 space-y-3">
+            <div class="font-mono text-xs text-amber-400">[SYS.MORNING // Q7]</div>
+            <label class="block font-display font-semibold text-lg text-white">✍️ Tu mensajito de buenos días (o tus exigencias del día)</label>
+            <textarea id="msg-morning" rows="4" placeholder="Escribe algo bonito para empezar el día..."
+                      class="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-amber-100 placeholder:text-slate-600 focus:outline-none focus:border-amber-400 resize-none"></textarea>
           </div>
 
           <button type="submit"
-                  class="send-btn w-full py-4 rounded-2xl font-bold text-lg text-white shadow-xl
-                         bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400
-                         hover:from-amber-500 hover:via-orange-500 hover:to-rose-500
-                         active:scale-[0.97] transition-transform duration-200 animate-glow-morning
-                         animate-slide-up delay-500" style="animation-fill-mode:both;">
-            Enviar a nuestro Discord 💌
+                  class="send-btn w-full py-4 rounded-2xl font-display font-bold text-lg text-black
+                         bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-500
+                         hover:from-amber-300 hover:to-yellow-400 shadow-lg shadow-amber-500/20
+                         active:scale-[0.98] transition-all">
+            ENVIAR A NUESTRO DISCORD 💌
           </button>
         </form>
 
         <!-- ─── NIGHT FORM ─── -->
-        <form id="form-night" class="space-y-5 hidden">
+        <form id="form-night" class="space-y-6 hidden">
 
           <!-- Q1 Stars -->
-          <div class="glass rounded-2xl p-5 bg-slate-800/60 border border-violet-500/20 shadow-lg shadow-violet-900/30 animate-slide-up">
-            <label class="block font-semibold text-base mb-3 text-violet-100">⭐ ¿Cómo calificarías tu día?</label>
+          <div class="cyber-card cyber-card-pink rounded-2xl p-5 space-y-3">
+            <div class="font-mono text-xs text-pink-400">[SYS.NIGHT // Q1]</div>
+            <label class="block font-display font-semibold text-lg text-violet-100">⭐ Si tu día fuera una película, ¿cuántas estrellas le darías?</label>
             <div id="star-rating" class="flex justify-center gap-1 flex-wrap">
               <span class="star" data-value="1">⭐</span>
               <span class="star" data-value="2">⭐</span>
@@ -381,64 +394,157 @@
               <span class="star" data-value="9">⭐</span>
               <span class="star" data-value="10">⭐</span>
             </div>
-            <p id="star-label" class="text-center text-sm text-violet-300 mt-2 h-5"></p>
+            <p id="star-label" class="text-center font-mono text-xs text-pink-300 mt-2 h-4"></p>
           </div>
 
           <!-- Q2 Emotion -->
-          <div class="glass rounded-2xl p-5 bg-slate-800/60 border border-violet-500/20 shadow-lg shadow-violet-900/30 animate-slide-up delay-100" style="animation-fill-mode:both;">
-            <label class="block font-semibold text-base mb-3 text-violet-100">💜 ¿Cómo te sientes ahora?</label>
+          <div class="cyber-card cyber-card-pink rounded-2xl p-5 space-y-3">
+            <div class="font-mono text-xs text-pink-400">[SYS.NIGHT // Q2]</div>
+            <label class="block font-display font-semibold text-lg text-violet-100">🧸 ¿Cómo está ese corazoncito ahora mismo?</label>
             <div id="emotion-options" class="grid grid-cols-2 gap-3">
-              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-violet-900/50 border-2 border-transparent text-center font-medium text-sm text-violet-100" data-value="mimosa">🧸 Mimosa</button>
-              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-violet-900/50 border-2 border-transparent text-center font-medium text-sm text-violet-100" data-value="cansada">🧠 Cansada</button>
-              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-violet-900/50 border-2 border-transparent text-center font-medium text-sm text-violet-100" data-value="feliz">✨ Feliz</button>
-              <button type="button" class="emoji-btn rounded-xl py-3 px-4 bg-violet-900/50 border-2 border-transparent text-center font-medium text-sm text-violet-100" data-value="pensativa">💭 Pensativa</button>
+              <button type="button" class="option-btn rounded-xl py-3 px-3 bg-slate-900/80 border border-slate-700 text-center font-medium text-xs text-slate-200" data-value="mimosa">🧸 Mimoso y extrañándote</button>
+              <button type="button" class="option-btn rounded-xl py-3 px-3 bg-slate-900/80 border border-slate-700 text-center font-medium text-xs text-slate-200" data-value="cansada">🧠 Cerebro frito / cansada</button>
+              <button type="button" class="option-btn rounded-xl py-3 px-3 bg-slate-900/80 border border-slate-700 text-center font-medium text-xs text-slate-200" data-value="feliz">✨ Feliz y tranquilita</button>
+              <button type="button" class="option-btn rounded-xl py-3 px-3 bg-slate-900/80 border border-slate-700 text-center font-medium text-xs text-slate-200" data-value="pensativa">💭 Dándole vueltas a todo</button>
             </div>
           </div>
 
           <!-- Q3 Worries -->
-          <div class="glass rounded-2xl p-5 bg-slate-800/60 border border-violet-500/20 shadow-lg shadow-violet-900/30 animate-slide-up delay-200" style="animation-fill-mode:both;">
-            <label class="block font-semibold text-base mb-3 text-violet-100">🔮 Preocupaciones o ilusiones para mañana</label>
+          <div class="cyber-card cyber-card-pink rounded-2xl p-5 space-y-3">
+            <div class="font-mono text-xs text-pink-400">[SYS.NIGHT // Q3]</div>
+            <label class="block font-display font-semibold text-lg text-violet-100">🔮 ¿Qué es lo que ronda por tu cabeza para mañana? (ilusiones, agobios...)</label>
             <textarea id="worries" rows="3" placeholder="Lo que ronda por tu mente..."
-                      class="w-full rounded-xl border border-violet-700/50 bg-slate-900/60 px-4 py-3 text-sm text-violet-100 placeholder:text-violet-400/60 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"></textarea>
+                      class="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-pink-100 placeholder:text-slate-600 focus:outline-none focus:border-pink-400 resize-none"></textarea>
           </div>
 
           <!-- Q4 Needs -->
-          <div class="glass rounded-2xl p-5 bg-slate-800/60 border border-violet-500/20 shadow-lg shadow-violet-900/30 animate-slide-up delay-300" style="animation-fill-mode:both;">
-            <label class="block font-semibold text-base mb-3 text-violet-100">🛏️ ¿Qué necesitas para dormir tranquila?</label>
+          <div class="cyber-card cyber-card-pink rounded-2xl p-5 space-y-3">
+            <div class="font-mono text-xs text-pink-400">[SYS.NIGHT // Q4]</div>
+            <label class="block font-display font-semibold text-lg text-violet-100">🛏️ ¿Qué necesita mi gatita para dormir como una reina hoy?</label>
             <div id="needs-night" class="space-y-2">
-              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-700/40 text-violet-100"><input type="checkbox" value="Nota de voz" class="w-5 h-5 rounded accent-violet-500" /><span class="text-sm font-medium">🎙️ Una nota de voz tuya</span></label>
-              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-700/40 text-violet-100"><input type="checkbox" value="Llamadita" class="w-5 h-5 rounded accent-violet-500" /><span class="text-sm font-medium">📞 Llamadita de buenas noches</span></label>
-              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-700/40 text-violet-100"><input type="checkbox" value="Te amo" class="w-5 h-5 rounded accent-violet-500" /><span class="text-sm font-medium">💖 Que me digas te amo</span></label>
-              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-700/40 text-violet-100"><input type="checkbox" value="Tranquilidad" class="w-5 h-5 rounded accent-violet-500" /><span class="text-sm font-medium">🫂 Saber que estamos bien</span></label>
-              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-700/40 text-violet-100"><input type="checkbox" value="Música" class="w-5 h-5 rounded accent-violet-500" /><span class="text-sm font-medium">🎵 Música relajante juntos</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-900/60 border border-slate-800 text-violet-100"><input type="checkbox" value="Nota de voz" class="w-4 h-4 accent-pink-500" /><span class="text-xs font-medium">🎙️ Una nota de voz para escuchar tu voz</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-900/60 border border-slate-800 text-violet-100"><input type="checkbox" value="Llamadita" class="w-4 h-4 accent-pink-500" /><span class="text-xs font-medium">📞 Hablar 5 minutitos antes de cerrar los ojos</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-900/60 border border-slate-800 text-violet-100"><input type="checkbox" value="Te amo" class="w-4 h-4 accent-pink-500" /><span class="text-xs font-medium">💖 Que me digas que me amas</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-900/60 border border-slate-800 text-violet-100"><input type="checkbox" value="Tranquilidad" class="w-4 h-4 accent-pink-500" /><span class="text-xs font-medium">🫂 Saber que estamos bien y conectados</span></label>
+              <label class="check-item flex items-center gap-3 rounded-xl p-3 bg-slate-900/60 border border-slate-800 text-violet-100"><input type="checkbox" value="Música" class="w-4 h-4 accent-pink-500" /><span class="text-xs font-medium">🎵 Escuchar nuestra playlist juntos</span></label>
             </div>
             <input id="needs-night-other" type="text" placeholder="Algo más..."
-                   class="mt-3 w-full rounded-xl border border-violet-700/50 bg-slate-900/60 px-4 py-2.5 text-sm text-violet-100 placeholder:text-violet-400/60 focus:outline-none focus:ring-2 focus:ring-violet-500" />
+                   class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-2.5 text-xs text-pink-100 placeholder:text-slate-600 focus:outline-none focus:border-pink-400" />
           </div>
 
           <!-- Q5 Message -->
-          <div class="glass rounded-2xl p-5 bg-slate-800/60 border border-violet-500/20 shadow-lg shadow-violet-900/30 animate-slide-up delay-400" style="animation-fill-mode:both;">
-            <label class="block font-semibold text-base mb-3 text-violet-100">🌙 Tu mensajito antes de apagar las luces</label>
+          <div class="cyber-card cyber-card-pink rounded-2xl p-5 space-y-3">
+            <div class="font-mono text-xs text-pink-400">[SYS.NIGHT // Q5]</div>
+            <label class="block font-display font-semibold text-lg text-violet-100">🌙 Tus últimas palabritas antes de apagar la luz y soñar conmigo...</label>
             <textarea id="msg-night" rows="4" placeholder="Dulces sueños comienzan con tus palabras..."
-                      class="w-full rounded-xl border border-violet-700/50 bg-slate-900/60 px-4 py-3 text-sm text-violet-100 placeholder:text-violet-400/60 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"></textarea>
+                      class="w-full rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-pink-100 placeholder:text-slate-600 focus:outline-none focus:border-pink-400 resize-none"></textarea>
           </div>
 
           <button type="submit"
-                  class="send-btn w-full py-4 rounded-2xl font-bold text-lg text-white shadow-xl
-                         bg-gradient-to-r from-violet-500 via-purple-500 to-indigo-500
-                         hover:from-violet-600 hover:via-purple-600 hover:to-indigo-600
-                         active:scale-[0.97] transition-transform duration-200 animate-glow-night
-                         animate-slide-up delay-500" style="animation-fill-mode:both;">
-            Enviar a nuestro Discord 💌
+                  class="send-btn w-full py-4 rounded-2xl font-display font-bold text-lg text-white
+                         bg-gradient-to-r from-pink-600 via-fuchsia-600 to-purple-600
+                         hover:from-pink-500 hover:to-purple-500 shadow-lg shadow-pink-500/20
+                         active:scale-[0.98] transition-all">
+            ENVIAR A NUESTRO DISCORD 💌
           </button>
         </form>
 
       </div>
     </main>
 
-    <footer class="text-center pb-6 px-4">
-      <p class="text-xs opacity-30">Hecho con 💕 para nosotros</p>
+    <footer class="text-center pb-8 px-4">
+      <p class="text-xs font-mono opacity-30 text-slate-400">CYBERPUNK BITÁCORA v2.5 // HECHO CON 💕 PARA GATITA</p>
     </footer>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       FEEDBACK CORNER WIDGET
+       ═══════════════════════════════════════════════════ -->
+  <button id="btn-feedback"
+          class="fixed bottom-4 left-4 z-30 px-3 py-2 rounded-xl cyber-card text-xs font-mono text-cyan-300
+                 hover:border-cyan-400 hover:text-cyan-200 transition-all flex items-center gap-2 shadow-lg">
+    💬 <span>Feedback / Sugerencias</span>
+  </button>
+
+  <!-- Feedback Modal -->
+  <div id="modal-feedback" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 px-4">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="feedback-bg"></div>
+    <div class="relative z-10 max-w-md w-full cyber-card rounded-3xl p-6 border-cyan-500/40 animate-sparkle-in">
+      <div class="font-mono text-xs text-cyan-400 mb-1">[FEEDBACK.SYS]</div>
+      <h3 class="font-display font-bold text-2xl text-white mb-2">💬 Esquina de Sugerencias</h3>
+      <p class="text-xs font-mono text-slate-300 mb-4">¿Hay algo que te gustaría cambiar, añadir o que sientas que falta en nuestra bitácora, mi amor?</p>
+      
+      <textarea id="feedback-text" rows="4" placeholder="Escribe aquí cualquier cambio o idea que se te ocurra..."
+                class="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-cyan-100 placeholder:text-slate-600 focus:outline-none focus:border-cyan-400 resize-none mb-4"></textarea>
+
+      <div class="flex gap-3">
+        <button id="feedback-cancel" class="flex-1 py-2.5 rounded-xl border border-slate-700 text-xs font-mono text-slate-300 hover:bg-slate-800">Cancelar</button>
+        <button id="feedback-send" class="flex-1 py-2.5 rounded-xl bg-cyan-500 text-black font-display font-bold text-sm hover:bg-cyan-400 shadow-lg shadow-cyan-500/30">Enviar a Discord 🚀</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════
+       ADMIN OVERLAY (EL TRANSFONDO)
+       ═══════════════════════════════════════════════════ -->
+  <div id="admin-panel" class="fixed inset-y-0 right-0 w-full max-w-md bg-slate-950 border-l border-pink-500/40 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col p-6 overflow-y-auto">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+      <div>
+        <div class="font-mono text-xs text-pink-400">[TRANSFONDO // ADMIN_PANEL]</div>
+        <h2 class="font-display font-bold text-2xl text-white">⚙️ Editor en Vivo</h2>
+      </div>
+      <button id="admin-close" class="text-slate-400 hover:text-white font-mono text-lg px-2">✕</button>
+    </div>
+
+    <p class="text-xs font-mono text-slate-400 mb-6">
+      Edita cualquier texto o funcionalidad. Haz clic en los elementos destacados o edítalos desde este panel.
+    </p>
+
+    <div class="space-y-5 flex-1">
+      <div>
+        <label class="block text-xs font-mono text-cyan-300 mb-1">🔗 Webhook Discord URL</label>
+        <input id="adm-webhook" type="url" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-200 focus:border-cyan-400" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-mono text-cyan-300 mb-1">💖 Título Pantalla 1</label>
+        <input id="adm-s1-title" type="text" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-200 focus:border-cyan-400" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-mono text-cyan-300 mb-1">📝 Subtítulo Pantalla 1</label>
+        <input id="adm-s1-sub" type="text" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-200 focus:border-cyan-400" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-mono text-amber-300 mb-1">☀️ Título Modo Mañana</label>
+        <input id="adm-m-title" type="text" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-200 focus:border-amber-400" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-mono text-pink-300 mb-1">🌙 Título Modo Noche</label>
+        <input id="adm-n-title" type="text" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-200 focus:border-pink-400" />
+      </div>
+
+      <div>
+        <label class="block text-xs font-mono text-pink-300 mb-1">🔥 Opciones Pregunta Esex (Mañana)</label>
+        <input id="adm-esex-o1" type="text" placeholder="Opción 1" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-1.5 text-xs text-slate-200 mb-1" />
+        <input id="adm-esex-o2" type="text" placeholder="Opción 2" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-1.5 text-xs text-slate-200 mb-1" />
+        <input id="adm-esex-o3" type="text" placeholder="Opción 3" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-1.5 text-xs text-slate-200 mb-1" />
+        <input id="adm-esex-o4" type="text" placeholder="Opción 4" class="w-full rounded-xl bg-slate-900 border border-slate-700 px-3 py-1.5 text-xs text-slate-200" />
+      </div>
+    </div>
+
+    <div class="pt-4 border-t border-slate-800 space-y-3 mt-4">
+      <button id="adm-save-live" class="w-full py-3 rounded-xl bg-cyan-500 text-black font-display font-bold text-sm hover:bg-cyan-400 shadow-lg">
+        Aplicar Cambios en Vivo ⚡
+      </button>
+      <button id="adm-export-file" class="w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-display font-bold text-sm hover:from-pink-500 hover:to-purple-500 shadow-lg">
+        Exportar index.html Actualizado 💾
+      </button>
+    </div>
   </div>
 
 
@@ -446,23 +552,24 @@
        CONFIRMATION OVERLAY
        ═══════════════════════════════════════════════════ -->
   <div id="confirmation" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500">
-    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-    <div class="relative z-10 mx-4 max-w-sm w-full rounded-3xl p-8 text-center animate-slide-up" id="confirm-card">
-      <div class="text-6xl mb-4 animate-wiggle">💖</div>
-      <h2 class="font-script text-3xl mb-2" id="confirm-title">¡Enviado!</h2>
-      <p class="text-base opacity-80 mb-6" id="confirm-msg">¡Reporte enviado a nuestro canal!<br/>Te amo 💖</p>
-      <button id="confirm-close" class="px-8 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 transition-all shadow-lg">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+    <div class="relative z-10 mx-4 max-w-sm w-full cyber-card rounded-3xl p-8 text-center animate-sparkle-in" id="confirm-card">
+      <div class="text-6xl mb-4 animate-float">💖</div>
+      <h2 class="font-display font-bold text-3xl text-white mb-2" id="confirm-title">¡Enviado!</h2>
+      <p class="text-sm font-mono text-slate-300 mb-6" id="confirm-msg">¡Reporte enviado a nuestro canal!<br/>Te amo 💖</p>
+      <button id="confirm-close" class="px-8 py-3 rounded-xl font-display font-bold text-black bg-cyan-400 hover:bg-cyan-300 transition-all shadow-lg glow-cyan">
         Cerrar 🥰
       </button>
     </div>
   </div>
 
   <!-- WATERMARK -->
-  <div class="fixed bottom-3 right-4 z-30 text-xs font-semibold opacity-25 select-none pointer-events-none tracking-wide"
-       style="font-family: 'Quicksand', sans-serif;">@a2gx</div>
+  <div id="watermark" class="fixed bottom-3 right-4 z-30 text-xs font-mono text-cyan-400/40 select-none cursor-pointer tracking-wider hover:text-pink-400 transition-colors">
+    papi zak
+  </div>
 
   <!-- ERROR TOAST -->
-  <div id="error-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-6 py-3 rounded-2xl bg-red-500 text-white font-semibold shadow-xl opacity-0 pointer-events-none transition-opacity duration-300 text-sm max-w-xs text-center">
+  <div id="error-toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-6 py-3 rounded-2xl bg-red-600 text-white font-mono shadow-xl opacity-0 pointer-events-none transition-opacity duration-300 text-xs max-w-xs text-center border border-red-400">
     <span id="error-msg">Error al enviar</span>
   </div>
 
@@ -472,24 +579,24 @@
        ═══════════════════════════════════════════════════ -->
   <script>
     // ╔════════════════════════════════════════════════════════════════╗
-    // ║  🔧 CONFIGURACIÓN — Pega aquí tu Webhook de Discord           ║
+    // ║  🔧 CONFIGURACIÓN PRINCIPAL                                   ║
     // ╚════════════════════════════════════════════════════════════════╝
-    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1542153169830674622/qW2PzZtopOgzFVVMt3S2u8eXKH00vY1uK1Q2VSZKG6vbrMkFKckItwTlBAudxSKt0Z7V";
-
+    let DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1542153169830674622/qW2PzZtopOgzFVVMt3S2u8eXKH00vY1uK1Q2VSZKG6vbrMkFKckItwTlBAudxSKt0Z7V";
 
     // ─── State ───
     let currentMode = null; // 'morning' | 'night'
     let selectedSleep = null;
     let selectedVibe = null;
     let selectedEmotion = null;
+    let selectedEsex = null;
     let starRating = 0;
     let noAttempts = 0;
+    let watermarkClicks = 0;
 
-    // Check URL params — Discord link buttons will set ?mode=morning or ?mode=night
     const urlParams = new URLSearchParams(window.location.search);
-    const presetMode = urlParams.get('mode'); // 'morning' or 'night'
+    const presetMode = urlParams.get('mode');
 
-    // ─── DOM ───
+    // ─── DOM References ───
     const screenLove = document.getElementById('screen-love');
     const screenChoice = document.getElementById('screen-choice');
     const screenForm = document.getElementById('screen-form');
@@ -502,6 +609,7 @@
     const formNight = document.getElementById('form-night');
     const formTitle = document.getElementById('form-title');
     const formSubtitle = document.getElementById('form-subtitle');
+    const formBadge = document.getElementById('form-badge');
     const confirmation = document.getElementById('confirmation');
     const confirmCard = document.getElementById('confirm-card');
     const confirmTitle = document.getElementById('confirm-title');
@@ -512,30 +620,39 @@
     const teaseMsg = document.getElementById('tease-msg');
     const noCounter = document.getElementById('no-counter');
     const particlesEl = document.getElementById('particles');
+    const watermark = document.getElementById('watermark');
 
-    // ─── Tease messages ───
+    // Admin & Feedback
+    const btnFeedback = document.getElementById('btn-feedback');
+    const modalFeedback = document.getElementById('modal-feedback');
+    const feedbackBg = document.getElementById('feedback-bg');
+    const feedbackCancel = document.getElementById('feedback-cancel');
+    const feedbackSend = document.getElementById('feedback-send');
+    const feedbackText = document.getElementById('feedback-text');
+
+    const btnAdminToggle = document.getElementById('btn-admin-toggle');
+    const adminPanel = document.getElementById('admin-panel');
+    const adminClose = document.getElementById('admin-close');
+    const admSaveLive = document.getElementById('adm-save-live');
+    const admExportFile = document.getElementById('adm-export-file');
+
+    // Teases
     const teaseMessages = [
-      '¡Jaja, no escaparás! 😏',
-      '¿Segura? 🥺👉👈',
-      '¡Ese botón no funciona! 💕',
-      '¡Ni lo intentes! 😤💖',
-      'La respuesta correcta es SÍ 🥰',
-      '¡El botón huye de ti! 🏃‍♀️💨',
-      '¡No es una opción válida! 😂',
-      '¿En serio? ¡Imposible! 💘',
-      'Venga, dale a Sí ya 😘',
-      '¡Jajaja, nunca lo atraparás! 🦋',
-      '¡Rindete y di que sí! 🫶',
-      'Me quieres y lo sabes 😌💕',
-      '¡El botón tiene piernas! 🦵✨',
-      '¡Otro intento fallido! 😂💖',
-      '¡Dale al grande, no al chiquito! 🎯',
+      '¡Error de sistema! Inténtalo de nuevo, lista. 😏',
+      '¿Segura? Te voy a dar un castigo... 😈',
+      'Ese botón no se toca, gatita. 💖',
+      'Intento fallido. El sistema prefiere tus mimos. 😤',
+      '¡Casi! Pero no. Dale a Sí. 😘',
+      'El botón huye porque sabe que mientes. 😂',
+      'Te vigilo... La respuesta es Sí. 👀',
+      '¡Que no! Ríndete ya. 🤪',
+      'Click bloqueado por exceso de terquedad. 🔒',
+      '¡Ups! Te hace falta puntería, mi amor. 🎯'
     ];
 
     // ═══════════════════════════════════════════
-    //  SCREEN 1 — Fleeing "No" button logic
+    //  SCREEN 1 — Fleeing No Button
     // ═══════════════════════════════════════════
-
     function fleeButton() {
       const btn = btnNo;
       const parent = screenLove;
@@ -544,7 +661,6 @@
       const btnH = btn.offsetHeight;
       const padding = 20;
 
-      // Random position within parent bounds
       const maxX = parentRect.width - btnW - padding * 2;
       const maxY = parentRect.height - btnH - padding * 2;
       const newX = padding + Math.random() * maxX;
@@ -554,159 +670,101 @@
       btn.style.top = newY + 'px';
       btn.style.position = 'fixed';
 
-      // Increment counter
       noAttempts++;
-      noCounter.textContent = `Intentos de huida: ${noAttempts}`;
+      noCounter.textContent = `[INTENTOS_HUIDA: ${noAttempts}]`;
 
-      // Show tease
       const msg = teaseMessages[Math.floor(Math.random() * teaseMessages.length)];
       teaseMsg.textContent = msg;
       teaseMsg.style.opacity = '1';
       setTimeout(() => { teaseMsg.style.opacity = '0'; }, 1800);
 
-      // Shake the Sí button to attract attention
       btnSi.classList.add('animate-shake');
       setTimeout(() => btnSi.classList.remove('animate-shake'), 500);
 
-      // Make button smaller each time (min 40px wide)
-      const currentWidth = btn.offsetWidth;
-      if (currentWidth > 50) {
-        btn.style.fontSize = Math.max(8, 12 - noAttempts * 0.3) + 'px';
-        btn.style.padding = `${Math.max(2, 6 - noAttempts * 0.3)}px ${Math.max(6, 16 - noAttempts)}px`;
+      if (btn.offsetWidth > 50) {
+        btn.style.fontSize = Math.max(8, 14 - noAttempts * 0.4) + 'px';
+        btn.style.padding = `${Math.max(4, 12 - noAttempts * 0.4)}px ${Math.max(10, 24 - noAttempts)}px`;
       }
     }
 
-    // Both hover and click trigger flee
     btnNo.addEventListener('mouseenter', fleeButton);
     btnNo.addEventListener('touchstart', (e) => { e.preventDefault(); fleeButton(); }, { passive: false });
     btnNo.addEventListener('click', (e) => { e.preventDefault(); fleeButton(); });
 
-    // ─── Sí button → go to choice screen ───
     btnSi.addEventListener('click', () => {
-      // Love confetti!
-      confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 },
-        colors: ['#f472b6', '#fb7185', '#e11d48', '#fbbf24', '#a78bfa'] });
-      setTimeout(() => {
-        confetti({ particleCount: 60, angle: 60, spread: 55, origin: { x: 0 },
-          colors: ['#f472b6', '#fbbf24'] });
-        confetti({ particleCount: 60, angle: 120, spread: 55, origin: { x: 1 },
-          colors: ['#a78bfa', '#fb7185'] });
-      }, 300);
-
-      // Transition
+      confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 }, colors: ['#ff007f', '#00f0ff', '#ffffff'] });
       screenLove.style.opacity = '0';
       screenLove.style.transform = 'scale(0.95)';
-      screenLove.style.transition = 'all 0.5s ease';
-
       setTimeout(() => {
         screenLove.classList.add('hidden');
-
-        // If a mode was pre-selected via URL param, skip the choice screen
         if (presetMode === 'morning' || presetMode === 'night') {
           currentMode = presetMode;
           showFormScreen();
         } else {
           screenChoice.classList.remove('hidden');
           screenChoice.style.opacity = '0';
-          requestAnimationFrame(() => {
-            screenChoice.style.transition = 'opacity 0.6s ease';
-            screenChoice.style.opacity = '1';
-          });
-          applyChoiceBg();
+          requestAnimationFrame(() => { screenChoice.style.opacity = '1'; });
         }
-      }, 500);
+      }, 400);
     });
 
+    btnWakeup.addEventListener('click', () => { currentMode = 'morning'; showFormScreen(); });
+    btnSleep.addEventListener('click', () => { currentMode = 'night'; showFormScreen(); });
 
     // ═══════════════════════════════════════════
-    //  SCREEN 2 — Choice buttons
+    //  SCREEN 3 — Form Screen
     // ═══════════════════════════════════════════
-
-    function applyChoiceBg() {
-      document.body.className = 'min-h-screen bg-gradient-to-br from-pink-100 via-rose-50 to-amber-50 text-rose-950 relative';
-      spawnParticles(['💕', '☀️', '🌙', '✨', '💛', '💜']);
-    }
-
-    btnWakeup.addEventListener('click', () => {
-      currentMode = 'morning';
-      showFormScreen();
-    });
-
-    btnSleep.addEventListener('click', () => {
-      currentMode = 'night';
-      showFormScreen();
-    });
-
-
-    // ═══════════════════════════════════════════
-    //  SCREEN 3 — Form
-    // ═══════════════════════════════════════════
-
     function showFormScreen() {
       screenChoice.style.opacity = '0';
-      screenChoice.style.transition = 'opacity 0.4s ease';
-
       setTimeout(() => {
         screenChoice.classList.add('hidden');
         screenForm.classList.remove('hidden');
 
         if (currentMode === 'morning') {
-          document.body.className = 'min-h-screen bg-amber-50 text-amber-950 relative';
+          formBadge.textContent = '[MODE // MORNING_PROTOCOL]';
+          formBadge.className = 'inline-block font-mono text-xs px-3 py-1 rounded-full border border-amber-400/40 text-amber-300 bg-amber-950/40 mb-2';
           formTitle.textContent = 'Buenos Días ☀️';
-          formTitle.style.color = '#b45309';
-          formSubtitle.textContent = 'Cuéntame cómo amaneciste, mi amor';
-          formSubtitle.style.color = '#92400e';
-          btnBack.className = 'fixed top-4 left-4 z-20 w-10 h-10 rounded-full flex items-center justify-center bg-white/60 glass shadow-lg hover:scale-110 active:scale-95 transition-transform text-lg text-amber-700';
+          formTitle.className = 'font-display font-bold text-4xl md:text-5xl tracking-wide text-amber-300';
+          formSubtitle.textContent = 'Cuéntame cómo amaneció mi gatita hermosa';
           formMorning.classList.remove('hidden');
           formNight.classList.add('hidden');
-          spawnParticles(['☀️', '🌸', '🦋', '✨', '💛', '🌻']);
+          spawnParticles(['☀️', '⚡', '✨', '💛', '🌸']);
         } else {
-          document.body.className = 'min-h-screen night-mode bg-slate-900 text-violet-50 relative';
+          formBadge.textContent = '[MODE // NIGHT_PROTOCOL]';
+          formBadge.className = 'inline-block font-mono text-xs px-3 py-1 rounded-full border border-pink-500/40 text-pink-300 bg-pink-950/40 mb-2';
           formTitle.textContent = 'Buenas Noches 🌙';
-          formTitle.style.color = '#c4b5fd';
-          formSubtitle.textContent = 'Cuéntame cómo fue tu día, mi vida';
-          formSubtitle.style.color = '#a78bfa';
-          btnBack.className = 'fixed top-4 left-4 z-20 w-10 h-10 rounded-full flex items-center justify-center bg-slate-800/60 glass shadow-lg hover:scale-110 active:scale-95 transition-transform text-lg text-violet-300';
+          formTitle.className = 'font-display font-bold text-4xl md:text-5xl tracking-wide text-pink-400';
+          formSubtitle.textContent = 'Registrando informe antes de soñar conmigo';
           formNight.classList.remove('hidden');
           formMorning.classList.add('hidden');
-          spawnParticles(['🌙', '⭐', '✨', '💫', '🌟', '💜']);
+          spawnParticles(['🌙', '⭐', '✨', '💜', '💫']);
         }
 
         screenForm.style.opacity = '0';
-        requestAnimationFrame(() => {
-          screenForm.style.transition = 'opacity 0.5s ease';
-          screenForm.style.opacity = '1';
-        });
+        requestAnimationFrame(() => { screenForm.style.opacity = '1'; });
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 400);
     }
 
-    // ─── Back button ───
     btnBack.addEventListener('click', () => {
       screenForm.style.opacity = '0';
-      screenForm.style.transition = 'opacity 0.4s ease';
       setTimeout(() => {
         screenForm.classList.add('hidden');
         screenChoice.classList.remove('hidden');
-        applyChoiceBg();
         screenChoice.style.opacity = '0';
-        requestAnimationFrame(() => {
-          screenChoice.style.transition = 'opacity 0.5s ease';
-          screenChoice.style.opacity = '1';
-        });
+        requestAnimationFrame(() => { screenChoice.style.opacity = '1'; });
       }, 400);
     });
 
-
     // ═══════════════════════════════════════════
-    //  Interactive elements
+    //  Single select options
     // ═══════════════════════════════════════════
-
     function setupSingleSelect(containerId, callback) {
       const container = document.getElementById(containerId);
-      container.querySelectorAll('.emoji-btn').forEach(btn => {
+      if (!container) return;
+      container.querySelectorAll('.option-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          container.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+          container.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
           callback(btn.dataset.value);
         });
@@ -714,6 +772,7 @@
     }
     setupSingleSelect('sleep-options', v => selectedSleep = v);
     setupSingleSelect('vibe-options', v => selectedVibe = v);
+    setupSingleSelect('esex-options', v => selectedEsex = v);
     setupSingleSelect('emotion-options', v => selectedEmotion = v);
 
     // Stars
@@ -729,54 +788,136 @@
         stars.forEach(s => s.classList.toggle('active', parseInt(s.dataset.value) <= starRating));
         starLabel.textContent = starLabels[starRating] || '';
       });
-      star.addEventListener('mouseenter', () => {
-        const val = parseInt(star.dataset.value);
-        stars.forEach(s => { if (parseInt(s.dataset.value) <= val) s.style.transform = 'scale(1.15)'; });
-      });
-      star.addEventListener('mouseleave', () => {
-        stars.forEach(s => { s.style.transform = s.classList.contains('active') ? 'scale(1.1)' : ''; });
-      });
     });
 
-    // Checklist styling
+    // Checklist
     document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
       cb.addEventListener('change', () => cb.closest('.check-item').classList.toggle('checked', cb.checked));
     });
 
-
-    // ═══════════════════════════════════════════
-    //  Particles
-    // ═══════════════════════════════════════════
-
+    // Particles
     function spawnParticles(symbols) {
       particlesEl.innerHTML = '';
-      for (let i = 0; i < 14; i++) {
+      for (let i = 0; i < 12; i++) {
         const p = document.createElement('div');
-        p.className = 'particle';
+        p.className = 'particle font-mono';
         p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-        p.style.fontSize = (14 + Math.random() * 22) + 'px';
+        p.style.fontSize = (14 + Math.random() * 20) + 'px';
         p.style.left = Math.random() * 100 + '%';
         p.style.top = Math.random() * 100 + '%';
         p.style.animation = `float ${5 + Math.random() * 8}s ease-in-out ${Math.random() * 5}s infinite`;
         particlesEl.appendChild(p);
       }
     }
-    spawnParticles(['💕', '💖', '✨', '🌸', '💛', '🦋']);
-
+    spawnParticles(['⚡', '✨', '💖', '🌸', '💫']);
 
     // ═══════════════════════════════════════════
-    //  Discord Webhook
+    //  Feedback Corner Modal
     // ═══════════════════════════════════════════
+    btnFeedback.addEventListener('click', () => {
+      modalFeedback.classList.remove('opacity-0', 'pointer-events-none');
+    });
+    feedbackCancel.addEventListener('click', () => {
+      modalFeedback.classList.add('opacity-0', 'pointer-events-none');
+    });
+    feedbackBg.addEventListener('click', () => {
+      modalFeedback.classList.add('opacity-0', 'pointer-events-none');
+    });
 
+    feedbackSend.addEventListener('click', async () => {
+      const text = feedbackText.value.trim();
+      if (!text) { showError('Escribe tu comentario antes de enviar.'); return; }
+
+      const payload = {
+        embeds: [{
+          title: "💡 Sugerencia / Feedback de Gatita",
+          description: `> ${text}`,
+          color: 0x00F0FF,
+          footer: { text: "💕 Bitácora Feedback System" },
+          timestamp: new Date().toISOString()
+        }]
+      };
+
+      try {
+        const res = await fetch(DISCORD_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        modalFeedback.classList.add('opacity-0', 'pointer-events-none');
+        feedbackText.value = '';
+        confetti({ particleCount: 60, spread: 60, origin: { y: 0.8 } });
+        showConfirmationCustom('¡Feedback Enviado! 💡', '¡Muchas gracias por tus ideas, mi amor! Las leeré ya mismo 💖');
+      } catch (err) {
+        showError('Error al enviar el feedback: ' + err.message);
+      }
+    });
+
+    // ═══════════════════════════════════════════
+    //  Admin Mode (El Transfondo — Modo Directo)
+    // ═══════════════════════════════════════════
+    function openAdminPanel() {
+      adminPanel.classList.remove('translate-x-full');
+      document.body.classList.add('admin-mode');
+      document.getElementById('adm-webhook').value = DISCORD_WEBHOOK_URL;
+      document.getElementById('adm-s1-title').value = document.getElementById('txt-s1-title').textContent.trim();
+      document.getElementById('adm-s1-sub').value = document.getElementById('txt-s1-sub').textContent.trim();
+    }
+
+    function closeAdminPanel() {
+      adminPanel.classList.add('translate-x-full');
+      document.body.classList.remove('admin-mode');
+    }
+
+    btnAdminToggle.addEventListener('click', openAdminPanel);
+    adminClose.addEventListener('click', closeAdminPanel);
+
+    watermark.addEventListener('click', () => {
+      watermarkClicks++;
+      if (watermarkClicks >= 3) {
+        openAdminPanel();
+        watermarkClicks = 0;
+      }
+    });
+
+    if (urlParams.get('admin') === 'true') {
+      openAdminPanel();
+    }
+
+    admSaveLive.addEventListener('click', () => {
+      const wh = document.getElementById('adm-webhook').value.trim();
+      if (wh) DISCORD_WEBHOOK_URL = wh;
+      document.getElementById('txt-s1-title').textContent = document.getElementById('adm-s1-title').value.trim() || '¿Me quieres?';
+      document.getElementById('txt-s1-sub').textContent = document.getElementById('adm-s1-sub').value.trim() || '[Respuesta requerida...]';
+      closeAdminPanel();
+      showError('⚡ Cambios aplicados en vivo');
+    });
+
+    admExportFile.addEventListener('click', () => {
+      const htmlContent = document.documentElement.outerHTML;
+      const blob = new Blob(['<!DOCTYPE html>\n' + htmlContent], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'index.html';
+      a.click();
+    });
+
+    // ═══════════════════════════════════════════
+    //  Discord Webhook Submissions
+    // ═══════════════════════════════════════════
     function collectMorningData() {
-      const map = { bien: '😴 Bien', regular: '🥱 Regular', energia: '🔋 Con energía', cansada: '🤒 Cansada' };
+      const sleepMap = { bien: '😴 Dormí como un angelito', regular: '🥱 A medias, me costó', energia: '⚡ ¡Pilas a tope y lista!', cansada: '🤒 Cansadita modo zombi' };
       const needs = [];
       document.querySelectorAll('#needs-morning input[type="checkbox"]:checked').forEach(cb => needs.push(cb.value));
       const other = document.getElementById('needs-morning-other').value.trim();
       if (other) needs.push(other);
+
       return {
-        sleep: map[selectedSleep] || 'Sin respuesta',
+        sleep: sleepMap[selectedSleep] || 'Sin respuesta',
         vibe: selectedVibe || 'Sin respuesta',
+        dream: document.getElementById('msg-dream').value.trim() || 'Sin sueños recordados ☁️',
+        esex: selectedEsex || 'Sin respuesta 🙈',
         needs: needs.length ? needs.join(', ') : 'Nada en especial',
         plan: document.getElementById('plan-dia').value.trim() || 'Sin plan aún',
         message: document.getElementById('msg-morning').value.trim() || '💛',
@@ -784,14 +925,15 @@
     }
 
     function collectNightData() {
-      const map = { mimosa: '🧸 Mimosa', cansada: '🧠 Cansada', feliz: '✨ Feliz', pensativa: '💭 Pensativa' };
+      const emotionMap = { mimosa: '🧸 Mimoso y extrañándote', cansada: '🧠 Cerebro frito / cansada', feliz: '✨ Feliz y tranquilita', pensativa: '💭 Dándole vueltas a todo' };
       const needs = [];
       document.querySelectorAll('#needs-night input[type="checkbox"]:checked').forEach(cb => needs.push(cb.value));
       const other = document.getElementById('needs-night-other').value.trim();
       if (other) needs.push(other);
+
       return {
         rating: starRating || 0,
-        emotion: map[selectedEmotion] || 'Sin respuesta',
+        emotion: emotionMap[selectedEmotion] || 'Sin respuesta',
         worries: document.getElementById('worries').value.trim() || 'Todo tranquilo 🌿',
         needs: needs.length ? needs.join(', ') : 'Solo tu amor 💜',
         message: document.getElementById('msg-night').value.trim() || '🌙💜',
@@ -803,107 +945,74 @@
       if (currentMode === 'morning') {
         const d = collectMorningData();
         return { embeds: [{
-          title: '☀️ Reporte Mañanero de Mi Amor',
+          title: '☀️ Reporte Mañanero de Gatita',
           color: 0xFFB703,
           thumbnail: { url: 'https://em-content.zobj.net/source/apple/391/sun_2600-fe0f.png' },
           fields: [
-            { name: '😴 ¿Cómo dormí?', value: d.sleep, inline: true },
-            { name: '✨ Mi vibe hoy', value: d.vibe, inline: true },
+            { name: '🌅 ¿Cómo durmió ese cuerpito?', value: d.sleep, inline: true },
+            { name: '✨ Sintonía / Vibe hoy', value: d.vibe, inline: true },
             { name: '\u200b', value: '\u200b' },
-            { name: '💌 Lo que necesito hoy', value: d.needs },
-            { name: '🌆 Plan para hoy', value: d.plan },
-            { name: '☀️ Mensajito de buenos días', value: `> ${d.message}` },
+            { name: '💭 ¿Qué soñó anoche?', value: d.dream },
+            { name: '🔥 ¿Ganas de esex hoy?', value: `**${d.esex}**`, inline: true },
+            { name: '\u200b', value: '\u200b' },
+            { name: '👉 Antojos / Necesidades', value: d.needs },
+            { name: '🎬 Plan para hoy', value: d.plan },
+            { name: '✍️ Mensajito de buenos días', value: `> ${d.message}` },
           ],
-          footer: { text: `💕 Bitácora de Conexión — Mañana  •  Intentos de "no": ${noAttempts}` },
-          timestamp,
+          footer: { text: `💕 Cyberpunk Bitácora — Mañana  •  Intentos de huida "no": ${noAttempts}` },
+          timestamp
         }] };
       } else {
         const d = collectNightData();
         const bar = '🟣'.repeat(d.rating) + '⚫'.repeat(10 - d.rating);
         return { embeds: [{
-          title: '🌙 Reporte Nocturno de Mi Amor',
-          color: 0x7209B7,
+          title: '🌙 Reporte Nocturno de Gatita',
+          color: 0xFF007F,
           thumbnail: { url: 'https://em-content.zobj.net/source/apple/391/crescent-moon_1f319.png' },
           fields: [
-            { name: '⭐ Mi día fue un…', value: `${bar}  **${d.rating}/10**` },
-            { name: '💜 Me siento', value: d.emotion, inline: true },
+            { name: '⭐ Puntuación de su día', value: `${bar}  **${d.rating}/10**` },
+            { name: '🧸 Su corazoncito está', value: d.emotion, inline: true },
             { name: '\u200b', value: '\u200b' },
-            { name: '🔮 Para mañana…', value: d.worries },
-            { name: '🛏️ Para dormir tranquila necesito', value: d.needs },
-            { name: '🌙 Mi mensajito de buenas noches', value: `> ${d.message}` },
+            { name: '🔮 Para mañana le ronda...', value: d.worries },
+            { name: '🛏️ Para dormir como reina necesita', value: d.needs },
+            { name: '🌙 Mensajito de buenas noches', value: `> ${d.message}` },
           ],
-          footer: { text: `💕 Bitácora de Conexión — Noche  •  Intentos de "no": ${noAttempts}` },
-          timestamp,
+          footer: { text: `💕 Cyberpunk Bitácora — Noche  •  Intentos de huida "no": ${noAttempts}` },
+          timestamp
         }] };
       }
     }
 
-    // ─── Confetti ───
-    function fireConfetti() {
-      const colors = currentMode === 'night'
-        ? ['#7c3aed', '#a78bfa', '#c4b5fd', '#818cf8', '#e879f9']
-        : ['#fbbf24', '#f59e0b', '#fb923c', '#f472b6', '#e11d48'];
-      confetti({ particleCount: 100, spread: 80, origin: { y: 0.7 }, colors, startVelocity: 35 });
-      setTimeout(() => {
-        confetti({ particleCount: 50, angle: 60, spread: 55, origin: { x: 0 }, colors });
-        confetti({ particleCount: 50, angle: 120, spread: 55, origin: { x: 1 }, colors });
-      }, 250);
-      setTimeout(() => {
-        confetti({ particleCount: 30, spread: 100, origin: { y: 0.6 },
-          shapes: ['circle'], colors: ['#f472b6', '#fb7185', '#e11d48'], scalar: 1.2, gravity: 0.6 });
-      }, 500);
-    }
-
-    // ─── UI helpers ───
-    function showError(msg) {
-      errorMsgEl.textContent = msg;
-      errorToast.classList.remove('opacity-0', 'pointer-events-none');
-      errorToast.classList.add('opacity-100');
-      setTimeout(() => {
-        errorToast.classList.add('opacity-0', 'pointer-events-none');
-        errorToast.classList.remove('opacity-100');
-      }, 4000);
-    }
-
-    function showConfirmation() {
-      if (currentMode === 'night') {
-        confirmCard.className = 'relative z-10 mx-4 max-w-sm w-full rounded-3xl p-8 text-center animate-slide-up bg-slate-800 text-violet-100 border border-violet-500/30';
-        confirmTitle.textContent = '¡Dulces Sueños! 🌙';
-        confirmMsg.innerHTML = '¡Reporte nocturno enviado a nuestro canal!<br/>Descansa bonito, te amo 💜✨';
-      } else {
-        confirmCard.className = 'relative z-10 mx-4 max-w-sm w-full rounded-3xl p-8 text-center animate-slide-up bg-white text-amber-900 border border-amber-200';
-        confirmTitle.textContent = '¡Buenos Días! ☀️';
-        confirmMsg.innerHTML = '¡Reporte mañanero enviado a nuestro canal!<br/>Te amo 💖';
-      }
-      confirmation.classList.remove('opacity-0', 'pointer-events-none');
-      confirmation.classList.add('opacity-100');
-    }
-    confirmClose.addEventListener('click', () => {
-      confirmation.classList.add('opacity-0', 'pointer-events-none');
-      confirmation.classList.remove('opacity-100');
-    });
-
-    // ─── Send ───
     async function sendToDiscord() {
-      if (DISCORD_WEBHOOK_URL === "TU_WEBHOOK_AQUI" || !DISCORD_WEBHOOK_URL) {
-        showError('⚠️ Configura el Webhook de Discord primero');
-        return;
-      }
+      if (!DISCORD_WEBHOOK_URL) { showError('Configura el Webhook primero'); return; }
       const payload = buildEmbed();
       try {
         const res = await fetch(DISCORD_WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(payload)
         });
-        if (!res.ok) throw new Error(`Discord respondió con ${res.status}`);
-        fireConfetti();
-        setTimeout(showConfirmation, 600);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        confetti({ particleCount: 120, spread: 80, origin: { y: 0.7 } });
+        setTimeout(() => showConfirmationCustom('¡Enviado a nuestro Discord! 💌', '¡Reporte recibido perfectamente! Te amo 💖'), 500);
       } catch (err) {
-        console.error('Error enviando a Discord:', err);
-        showError(`Error: ${err.message}`);
+        showError('Error al enviar a Discord: ' + err.message);
       }
     }
+
+    function showError(msg) {
+      errorMsgEl.textContent = msg;
+      errorToast.classList.remove('opacity-0', 'pointer-events-none');
+      errorToast.classList.add('opacity-100');
+      setTimeout(() => { errorToast.classList.add('opacity-0', 'pointer-events-none'); }, 4000);
+    }
+
+    function showConfirmationCustom(title, msg) {
+      confirmTitle.textContent = title;
+      confirmMsg.innerHTML = msg;
+      confirmation.classList.remove('opacity-0', 'pointer-events-none');
+    }
+    confirmClose.addEventListener('click', () => { confirmation.classList.add('opacity-0', 'pointer-events-none'); });
 
     formMorning.addEventListener('submit', e => { e.preventDefault(); sendToDiscord(); });
     formNight.addEventListener('submit', e => { e.preventDefault(); sendToDiscord(); });
